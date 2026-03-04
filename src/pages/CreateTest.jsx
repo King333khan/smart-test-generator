@@ -166,14 +166,30 @@ const CreateTest = () => {
 
                         <div className="chapters-list">
                             {CHAPTERS[`${testData.cls}_${testData.subject}`]?.map(ch => (
-                                <label key={ch.id} className={`chapter-item ${testData.chapters.includes(ch.id) ? 'selected' : ''}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={testData.chapters.includes(ch.id)}
-                                        onChange={() => toggleChapter(ch.id)}
-                                    />
-                                    <span>{ch.name}</span>
-                                </label>
+                                <div key={ch.id} className="chapter-group" style={{ marginBottom: '1rem' }}>
+                                    <label className={`chapter-item ${testData.chapters.includes(ch.id) ? 'selected' : ''}`} style={{ fontWeight: '600' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={testData.chapters.includes(ch.id)}
+                                            onChange={() => toggleChapter(ch.id)}
+                                        />
+                                        <span>{ch.name}</span>
+                                    </label>
+                                    {ch.topics && ch.topics.length > 0 && (
+                                        <div className="topics-list" style={{ paddingLeft: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                            {ch.topics.map(topic => (
+                                                <label key={topic.id} className={`chapter-item ${testData.chapters.includes(topic.id) ? 'selected' : ''}`} style={{ fontSize: '0.9rem', padding: '0.5rem', minHeight: 'auto' }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={testData.chapters.includes(topic.id)}
+                                                        onChange={() => toggleChapter(topic.id)}
+                                                    />
+                                                    <span>{topic.name}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             )) || <p className="text-muted">No mock chapters available for this selection. Try 9th Physics.</p>}
                         </div>
                     </div>
