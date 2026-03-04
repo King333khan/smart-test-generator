@@ -212,6 +212,177 @@ export const CHAPTERS = {
             ]
         }
     ],
+    '9_che': [
+        {
+            id: 'ch1',
+            name: 'CHAP 1: States of Matter and Phase Changes',
+            topics: [
+                { id: 'ch1_t1', name: '1.1 What is Chemistry?' },
+                { id: 'ch1_t2', name: '1.2 States of Matter' },
+                { id: 'ch1_t3', name: '1.3 Element, Compound and Mixture' },
+                { id: 'ch1_t4', name: '1.6 Solution, Colloidal Solutionsand Suspension' },
+                { id: 'ch1_t5', name: '1.4 Allotropic Forms of Substances' },
+                { id: 'ch1_t6', name: '1.5 Differences between Elements, Compounds and Mixtures' },
+                { id: 'ch1_t7', name: '1.7 Formation of Unsaturated and Saturated Solutions' },
+                { id: 'ch1_t8', name: '1.8 Effect of Temperature on the Solubility of Solutes' },
+                { id: 'ch1_t9', name: '1.9 Exercise' }
+            ]
+        },
+        {
+            id: 'ch2',
+            name: 'CHAP 2: Atomic Structure',
+            topics: [
+                { id: 'ch2_t1', name: '2.1 Structure of Atom' },
+                { id: 'ch2_t2', name: '2.1.1 Discovery of Electrons' },
+                { id: 'ch2_t3', name: '2.1.2 Discovery of Protons' },
+                { id: 'ch2_t4', name: '2.1.3 Origin of Cathode and Anode Rays' },
+                { id: 'ch2_t5', name: '2.1.4 Discovery of Neutron' },
+                { id: 'ch2_t6', name: '2.2 Atomic Number and Mass Number' },
+                { id: 'ch2_t7', name: '2.3 Isotopes and their Masses' },
+                { id: 'ch2_t8', name: '2.3.1 Radioactive Isotopes' },
+                { id: 'ch2_t9', name: '2.3.2 Applications of Radioactive Isotopes' },
+                { id: 'ch2_t10', name: '2.3.3 Ionization of Atom By a Radioactive Source' },
+                { id: 'ch2_t11', name: '2.4 Relative Atomic Mass' },
+                { id: 'ch2_t12', name: '2.4.1 Calculation of Relative Atomic Mass From Isotopic Abundancec' }
+            ]
+        },
+        {
+            id: 'ch3',
+            name: 'CHAP 3: Chemical Bonding',
+            topics: [
+                { id: 'ch3_t1', name: '3.1: Why do atoms form chemical bonds?' },
+                { id: 'ch3_t2', name: '3.2 Chemical Bond' },
+                { id: 'ch3_t3', name: '3.2.1 Ionic Bond' },
+                { id: 'ch3_t4', name: '3.2.2 Covalent Bond' },
+                { id: 'ch3_t5', name: '3.2.3 Coordinate Covalent Bond' },
+                { id: 'ch3_t6', name: '3.3 Metallic Bond' },
+                { id: 'ch3_t7', name: '3.4 Electropositive Character of Metals' },
+                { id: 'ch3_t8', name: '3.5 Electronegative character of Non-metals' },
+                { id: 'ch3_t9', name: '3.6 Compare the properties of ionic and covalent compounds' },
+                { id: 'ch3_t10', name: '3.7 Intermolecular Forces of Attraction' },
+                { id: 'ch3_t11', name: '3.8 Nature of Bonding and Properties' }
+            ]
+        },
+        {
+            id: 'ch4',
+            name: 'CHAP 4: Stoichiometry',
+            topics: [
+                { id: 'ch4_t1', name: '4.1 Chemical formula' },
+                { id: 'ch4_t2', name: '4.2 Empirical Formula' },
+                { id: 'ch4_t3', name: '4.3 Chemical Formula of Binary lonic Compounds' },
+                { id: 'ch4_t4', name: '4.4 Chemical Formula of Compounds' },
+                { id: 'ch4_t5', name: '4.5 Deduce the molecular formula from the structural formula' },
+                { id: 'ch4_t6', name: '4.6 Avogadro\'s Number' },
+                { id: 'ch4_t7', name: '4.7 The Mole and Molar Mass' },
+                { id: 'ch4_t8', name: '4.8 Chemical Equations and Chemical Reactions' },
+                { id: 'ch4_t9', name: '4.9 Calculations Based on Chemical Equation' },
+                { id: 'ch4_t10', name: '4.0 Introduction' }
+            ]
+        },
+        {
+            id: 'ch5',
+            name: 'CHAP 5: Energetics',
+            topics: [
+                { id: 'ch5_t1', name: 'Introduction' },
+                { id: 'ch5_t2', name: '5.1 System and Surounding' },
+                { id: 'ch5_t3', name: '5.2 Enthalpy' },
+                { id: 'ch5_t4', name: '5.3 Exothermic and Endothermic Reactions' },
+                { id: 'ch5_t5', name: '5.4. Plow does a Reaction take place?' },
+                { id: 'ch5_t6', name: '5.5 Aerobic and Anaerobic Respiration' }
+            ]
+        },
+        {
+            id: 'ch6',
+            name: 'CHAP 6: Equilibria',
+            topics: [
+                { id: 'ch6_t1', name: '6.1 Reversible and Irreversible Changes' },
+                { id: 'ch6_t2', name: '6.2 Dynamic Equilibrium' },
+                { id: 'ch6_t3', name: '6.3 Changes the Physical Conditions of a Chemical Reaction' }
+            ]
+        },
+        {
+            id: 'ch7',
+            name: 'CHAP 7: Acid Base Chemistry',
+            topics: [
+                { id: 'ch7_t1', name: '7.1 Acids.and Bases' },
+                { id: 'ch7_t2', name: '7.2 DIFFERENT CONCEPTS OF ACIDS AND BASES' },
+                { id: 'ch7_t3', name: '7.3 Bronsted ~ Lowry concepts of Acicis and Bases' },
+                { id: 'ch7_t4', name: '7.4 Properties of Acids and Bases' },
+                { id: 'ch7_t5', name: '7.5 Acid Rain and its Effects' }
+            ]
+        },
+        {
+            id: 'ch8',
+            name: 'CHAP 8: Periodic Table and Periodicity',
+            topics: [
+                { id: 'ch8_t1', name: '8.1 Modern Periodic Table' },
+                { id: 'ch8_t2', name: '8.2 Salient Features of Modern Periodic Table' },
+                { id: 'ch8_t3', name: '8.3 Similarities in the Chemical Properties of Elements in the Same Group' },
+                { id: 'ch8_t4', name: '8.4 Variation of Periodic Properties in Periods and Groups' },
+                { id: 'ch8_t5', name: '8.5 Metallic Character and Reactivity' }
+            ]
+        },
+        {
+            id: 'ch9',
+            name: 'CHAP 9: Group Properties and Elements',
+            topics: [
+                { id: 'ch9_t1', name: '9.1 Properties of Group 1 Elements' },
+                { id: 'ch9_t2', name: '9.2 Properties of Group 17 Elements' },
+                { id: 'ch9_t3', name: '9.3 Group Properties of Transition elements' },
+                { id: 'ch9_t4', name: '9.4 Properties of Noble Gases' },
+                { id: 'ch9_t5', name: '9.5 Physical Properties of Metals and Non-metals' },
+                { id: 'ch9_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch10',
+            name: 'CHAP 10: Environmental Chemistry',
+            topics: [
+                { id: 'ch10_t1', name: 'Introduction' },
+                { id: 'ch10_t2', name: '10.1 Composition Of Atmosphere' },
+                { id: 'ch10_t3', name: '10.2 Air Pollutants' },
+                { id: 'ch10_t4', name: '10.3 Acid Rain' },
+                { id: 'ch10_t5', name: '10.4 Global Warming (Greenhouse Effect)' },
+                { id: 'ch10_t6', name: '10.5 Strategies to Reduce Environmental Issues' },
+                { id: 'ch10_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch11',
+            name: 'CHAP 11: Hydrocarbons',
+            topics: [
+                { id: 'ch11_t1', name: 'Introduction' },
+                { id: 'ch11_t2', name: '11.1 Hyrocarbons' },
+                { id: 'ch11_t3', name: '11.2 Alkanes' },
+                { id: 'ch11_t4', name: '11.3 Preparation' },
+                { id: 'ch11_t5', name: '11.4 Important Reactions' },
+                { id: 'ch11_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch12',
+            name: 'CHAP 12: Empirical Data Collection and Analysis',
+            topics: [
+                { id: 'ch12_t1', name: 'Introduction' },
+                { id: 'ch12_t2', name: '12.1 SI Units in Chemistry' },
+                { id: 'ch12_t3', name: '12.2 Tools and Techniques to Manage Accuracy and Precision' },
+                { id: 'ch12_t4', name: '12.3 Accuracy and Precision' }
+            ]
+        },
+        {
+            id: 'ch13',
+            name: 'CHAP 13: Laboratory and Practical Skills',
+            topics: [
+                { id: 'ch13_t1', name: 'Introduction' },
+                { id: 'ch13_t2', name: '13.1 Chemical Hazards in the Laboratory' },
+                { id: 'ch13_t3', name: '13.2 Hazard Signs' },
+                { id: 'ch13_t4', name: '13.3 Personal Protective Equipment (PPE) in the Laboratory' },
+                { id: 'ch13_t5', name: '13.4 Location of Fire Extinguisher' },
+                { id: 'ch13_t6', name: '13.5 Emergency Situation in the Lab' },
+                { id: 'ch13_ex', name: 'Exercise' }
+            ]
+        }
+    ],
     '9_bio': [
         { id: 'ch1', name: '1. Introduction to Biology' },
         { id: 'ch2', name: '2. Solving a Biological Problem' },
