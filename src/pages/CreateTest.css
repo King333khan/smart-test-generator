@@ -438,15 +438,6 @@
         width: 100% !important;
     }
 
-    .create-test-container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        border-radius: 0;
-        box-shadow: none;
-        min-height: auto;
-    }
-
     .paper-container {
         padding: 0;
         border: none;
@@ -458,5 +449,115 @@
     .short-qs,
     .long-qs {
         break-inside: avoid;
+    }
+}
+
+/* Mobile Responsiveness for CreateTest elements */
+@media screen and (max-width: 768px) {
+    .create-test-container {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+
+    .create-test-header h1 {
+        font-size: 1.75rem;
+    }
+
+    /* Adjust Step Indicator */
+    .step-indicator {
+        padding: 0;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .step-item {
+        flex-direction: column;
+        flex: none;
+        width: 100%;
+        margin-bottom: 1rem;
+        align-items: flex-start;
+        padding-left: 1rem;
+    }
+
+    .step-item:last-child {
+        flex: none;
+    }
+
+    .step-line {
+        display: none;
+        /* Hide horizontal lines on mobile */
+    }
+
+    .step-label {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        margin-left: 1rem;
+    }
+
+    .step-item:first-child .step-label,
+    .step-item:last-child .step-label {
+        left: 0;
+        right: auto;
+        transform: none;
+    }
+
+    .step-circle {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Adjust Options Grid */
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Adjust paper layout for mobile view (not print) */
+    .paper-container {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .institute-title {
+        font-size: 1.5rem;
+    }
+
+    .paper-meta,
+    .student-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .dual-mcq-item .mcq-question-row {
+        flex-direction: column;
+    }
+
+    .dual-mcq-item .mcq-ur {
+        text-align: left;
+    }
+
+    .dual-mcq-item .mcq-options-row {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-left: 0;
+    }
+
+    .dual-mcq-item .mcq-options-row>div {
+        text-align: left;
+    }
+
+    .wizard-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .wizard-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .wizard-footer>div {
+        flex-direction: column;
+        width: 100%;
     }
 }

@@ -53,6 +53,30 @@ body {
   flex: 1;
   padding: 2rem;
   width: calc(100% - var(--sidebar-width));
+  transition: all 0.3s ease;
+}
+
+/* Base Responsive Layout */
+@media screen and (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+    z-index: 10;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
 }
 
 /* Base styles / Utils */
