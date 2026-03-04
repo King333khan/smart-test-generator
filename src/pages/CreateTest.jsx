@@ -60,14 +60,33 @@ const CreateTest = () => {
 
     const prevStep = () => setStep(prev => prev - 1);
 
-    const toggleChapter = (chapterId) => {
+    const toggleChapterOrTopic = (id, isChapter, topicIds = []) => {
         setTestData(prev => {
-            const isSelected = prev.chapters.includes(chapterId);
-            if (isSelected) {
-                return { ...prev, chapters: prev.chapters.filter(id => id !== chapterId) };
+            const currentSelected = new Set(prev.chapters);
+
+            if (isChapter) {
+                // If chapter is already selected, deselect chapter and all its topics
+                if (currentSelected.has(id)) {
+                    currentSelected.delete(id);
+                    topicIds.forEach(tId => currentSelected.delete(tId));
+                } else {
+                    // Select chapter and all its topics
+                    currentSelected.add(id);
+                    topicIds.forEach(tId => currentSelected.add(tId));
+                }
             } else {
-                return { ...prev, chapters: [...prev.chapters, chapterId] };
+                // Toggling individual topic
+                if (currentSelected.has(id)) {
+                    currentSelected.delete(id);
+                } else {
+                    currentSelected.add(id);
+                }
+
+                // Optional: Auto-select/deselect parent chapter based on topics selected
+                // (Omitted here to keep the logic simple as requested: "if I select a chapter it selects all, if I select a topic it only selects the topic")
             }
+
+            return { ...prev, chapters: Array.from(currentSelected) };
         });
     };
 
@@ -171,7 +190,7 @@ const CreateTest = () => {
                                         <input
                                             type="checkbox"
                                             checked={testData.chapters.includes(ch.id)}
-                                            onChange={() => toggleChapter(ch.id)}
+                                            onChange={() => toggleChapterOrTopic(ch.id, true, ch.topics?.map(t => t.id) || [])}
                                         />
                                         <span>{ch.name}</span>
                                     </label>
@@ -182,7 +201,7 @@ const CreateTest = () => {
                                                     <input
                                                         type="checkbox"
                                                         checked={testData.chapters.includes(topic.id)}
-                                                        onChange={() => toggleChapter(topic.id)}
+                                                        onChange={() => toggleChapterOrTopic(topic.id, false)}
                                                     />
                                                     <span>{topic.name}</span>
                                                 </label>
