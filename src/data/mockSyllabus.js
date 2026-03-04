@@ -1,4 +1,4 @@
-git config--global user.name "King Akmal"import physics9thCover from '../assets/covers/physics-9th.jpg';
+import physics9thCover from '../assets/covers/physics-9th.jpg';
 import biology9thCover from '../assets/covers/biology-9th.jpg';
 import math9thCover from '../assets/covers/math-9th.jpg';
 import chemistry9thCover from '../assets/covers/chemistry-9th.jpg';
