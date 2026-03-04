@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Check, FileDown, Printer, Edit2, Save } from 'lucide-react';
+import { ChevronRight, Check, FileDown, Printer, Edit2, Save, ChevronDown, ChevronUp } from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 import './CreateTest.css';
 
@@ -43,6 +43,15 @@ const CreateTest = () => {
     });
 
     const [isSaved, setIsSaved] = useState(false);
+    const [expandedChapters, setExpandedChapters] = useState([]); // State for expanded chapter IDs
+
+    const toggleChapterExpansion = (chapterId) => {
+        setExpandedChapters(prev =>
+            prev.includes(chapterId)
+                ? prev.filter(id => id !== chapterId)
+                : [...prev, chapterId]
+        );
+    };
 
     const updateData = (key, value) => {
         setTestData(prev => ({ ...prev, [key]: value }));
@@ -186,16 +195,27 @@ const CreateTest = () => {
                         <div className="chapters-list">
                             {CHAPTERS[`${testData.cls}_${testData.subject}`]?.map(ch => (
                                 <div key={ch.id} className="chapter-group" style={{ marginBottom: '1rem' }}>
-                                    <label className={`chapter-item ${testData.chapters.includes(ch.id) ? 'selected' : ''}`} style={{ fontWeight: '600' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={testData.chapters.includes(ch.id)}
-                                            onChange={() => toggleChapterOrTopic(ch.id, true, ch.topics?.map(t => t.id) || [])}
-                                        />
-                                        <span>{ch.name}</span>
-                                    </label>
-                                    {ch.topics && ch.topics.length > 0 && (
-                                        <div className="topics-list" style={{ paddingLeft: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                    <div className={`chapter-item ${testData.chapters.includes(ch.id) ? 'selected' : ''}`} style={{ fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={testData.chapters.includes(ch.id)}
+                                                onChange={() => toggleChapterOrTopic(ch.id, true, ch.topics?.map(t => t.id) || [])}
+                                            />
+                                            <span>{ch.name}</span>
+                                        </div>
+                                        {ch.topics && ch.topics.length > 0 && (
+                                            <button
+                                                className="btn btn-secondary"
+                                                style={{ padding: '0.25rem', border: 'none', background: 'transparent' }}
+                                                onClick={() => toggleChapterExpansion(ch.id)}
+                                            >
+                                                {expandedChapters.includes(ch.id) ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                            </button>
+                                        )}
+                                    </div>
+                                    {ch.topics && ch.topics.length > 0 && expandedChapters.includes(ch.id) && (
+                                        <div className="topics-list fade-in" style={{ paddingLeft: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
                                             {ch.topics.map(topic => (
                                                 <label key={topic.id} className={`chapter-item ${testData.chapters.includes(topic.id) ? 'selected' : ''}`} style={{ fontSize: '0.9rem', padding: '0.5rem', minHeight: 'auto' }}>
                                                     <input
