@@ -33,7 +33,7 @@ const CreateTest = () => {
             cls: '',
             subject: '',
             chapters: [],
-            config: { mcqs: 10, shortQs: 5, longQs: 2, totalMarks: 50 },
+            config: { mcqs: 10, mcqMarks: 1, shortQs: 5, shortQsAttempt: 5, shortQMarks: 2, longQs: 2, longQsAttempt: 2, longQMarks: 5, totalMarks: 50 },
             customQs: [],
             instituteName: savedSettings.defaultInstitute || 'My School',
             testTitle: savedSettings.defaultTestTitle || 'Monthly Assessment - 2026',
@@ -290,19 +290,55 @@ const CreateTest = () => {
 
                             <div className="nav-divider" style={{ margin: '2rem 0' }}></div>
 
-                            <h3>Question Distribution</h3>
-                            <div className="options-grid" style={{ marginTop: '1rem' }}>
-                                <div className="form-group">
-                                    <label>Number of MCQs</label>
-                                    <input type="number" className="form-input" value={testData.config.mcqs} onChange={e => updateConfig('mcqs', e.target.value)} />
+                            <h3>Question Distribution & Marks</h3>
+
+                            <div className="config-section-box">
+                                <h4>Multiple Choice Questions (MCQs)</h4>
+                                <div className="options-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '1fr 1fr' }}>
+                                    <div className="form-group">
+                                        <label>Total MCQs</label>
+                                        <input type="number" className="form-input" value={testData.config.mcqs} onChange={e => updateConfig('mcqs', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Marks per MCQ</label>
+                                        <input type="number" className="form-input" value={testData.config.mcqMarks} onChange={e => updateConfig('mcqMarks', e.target.value)} />
+                                    </div>
                                 </div>
-                                <div className="form-group">
-                                    <label>Short Questions</label>
-                                    <input type="number" className="form-input" value={testData.config.shortQs} onChange={e => updateConfig('shortQs', e.target.value)} />
+                            </div>
+
+                            <div className="config-section-box" style={{ marginTop: '1.5rem' }}>
+                                <h4>Short Questions</h4>
+                                <div className="options-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '1fr 1fr 1fr' }}>
+                                    <div className="form-group">
+                                        <label>Total Given</label>
+                                        <input type="number" className="form-input" value={testData.config.shortQs} onChange={e => updateConfig('shortQs', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>To Attempt</label>
+                                        <input type="number" className="form-input" value={testData.config.shortQsAttempt} onChange={e => updateConfig('shortQsAttempt', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Marks per Question</label>
+                                        <input type="number" className="form-input" value={testData.config.shortQMarks} onChange={e => updateConfig('shortQMarks', e.target.value)} />
+                                    </div>
                                 </div>
-                                <div className="form-group">
-                                    <label>Long Questions</label>
-                                    <input type="number" className="form-input" value={testData.config.longQs} onChange={e => updateConfig('longQs', e.target.value)} />
+                            </div>
+
+                            <div className="config-section-box" style={{ marginTop: '1.5rem' }}>
+                                <h4>Long Questions</h4>
+                                <div className="options-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '1fr 1fr 1fr' }}>
+                                    <div className="form-group">
+                                        <label>Total Given</label>
+                                        <input type="number" className="form-input" value={testData.config.longQs} onChange={e => updateConfig('longQs', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>To Attempt</label>
+                                        <input type="number" className="form-input" value={testData.config.longQsAttempt} onChange={e => updateConfig('longQsAttempt', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Marks per Question</label>
+                                        <input type="number" className="form-input" value={testData.config.longQMarks} onChange={e => updateConfig('longQMarks', e.target.value)} />
+                                    </div>
                                 </div>
                             </div>
 
@@ -400,8 +436,8 @@ const CreateTest = () => {
                                             <h3 className="ur">حصہ اول - معروضی</h3>
                                         </div>
                                         <div className="dual-lang-header" style={{ marginBottom: '1rem' }}>
-                                            <span className="en">Marks: {(testData.config.mcqs + testData.customQs.filter(q => q.type === 'mcq').length) * 1}</span>
-                                            <span className="ur">نمبر: {(testData.config.mcqs + testData.customQs.filter(q => q.type === 'mcq').length) * 1}</span>
+                                            <span className="en">Marks: {(testData.config.mcqs + testData.customQs.filter(q => q.type === 'mcq').length) * (testData.config.mcqMarks || 1)}</span>
+                                            <span className="ur">نمبر: {(testData.config.mcqs + testData.customQs.filter(q => q.type === 'mcq').length) * (testData.config.mcqMarks || 1)}</span>
                                         </div>
 
                                         <div className="dual-lang-header">
@@ -455,8 +491,8 @@ const CreateTest = () => {
                                         {testData.config.shortQs > 0 && (
                                             <div className="short-qs" style={{ marginTop: '1.5rem' }}>
                                                 <div className="dual-lang-header">
-                                                    <p className="en"><strong>Q2: Write short answers. ({(testData.config.shortQs + testData.customQs.filter(q => q.type === 'short').length) * 2} Marks)</strong></p>
-                                                    <p className="ur"><strong>سوال 2: مختصر جوابات لکھیں۔ ({(testData.config.shortQs + testData.customQs.filter(q => q.type === 'short').length) * 2} نمبر)</strong></p>
+                                                    <p className="en"><strong>Q2: Write short answers of any {testData.config.shortQsAttempt || testData.config.shortQs} questions. ({(testData.config.shortQsAttempt || testData.config.shortQs) * (testData.config.shortQMarks || 2)} Marks)</strong></p>
+                                                    <p className="ur"><strong>سوال 2: کوئی سے {testData.config.shortQsAttempt || testData.config.shortQs} مختصر جوابات لکھیں۔ ({(testData.config.shortQsAttempt || testData.config.shortQs) * (testData.config.shortQMarks || 2)} نمبر)</strong></p>
                                                 </div>
 
                                                 <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -479,8 +515,8 @@ const CreateTest = () => {
                                         {testData.config.longQs > 0 && (
                                             <div className="long-qs" style={{ marginTop: '2rem' }}>
                                                 <div className="dual-lang-header">
-                                                    <p className="en"><strong>Attempt questions in detail. ({(testData.config.longQs + testData.customQs.filter(q => q.type === 'long').length) * 5} Marks)</strong></p>
-                                                    <p className="ur"><strong>تفصیلی جوابات لکھیں۔ ({(testData.config.longQs + testData.customQs.filter(q => q.type === 'long').length) * 5} نمبر)</strong></p>
+                                                    <p className="en"><strong>Attempt any {testData.config.longQsAttempt || testData.config.longQs} questions in detail. ({(testData.config.longQsAttempt || testData.config.longQs) * (testData.config.longQMarks || 5)} Marks)</strong></p>
+                                                    <p className="ur"><strong>کوئی سے {testData.config.longQsAttempt || testData.config.longQs} تفصیلی جوابات لکھیں۔ ({(testData.config.longQsAttempt || testData.config.longQs) * (testData.config.longQMarks || 5)} نمبر)</strong></p>
                                                 </div>
 
                                                 <div style={{ marginTop: '1.5rem' }}>
