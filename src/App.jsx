@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import CreateTest from './pages/CreateTest';
 import SavedTests from './pages/SavedTests';
+import PastPapers from './pages/PastPapers';
 import ViewTest from './pages/ViewTest';
 import Settings from './pages/Settings';
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/create" element={<CreateTest />} />
             <Route path="/saved" element={<SavedTests />} />
+            <Route path="/past-papers" element={<PastPapers />} />
             <Route path="/test/:id" element={<ViewTest />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

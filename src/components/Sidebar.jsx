@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, FileSignature, Save, Settings } from 'lucide-react';
+import { Home, FileSignature, Save, Settings, Library } from 'lucide-react';
 import appLogo from '../assets/logo.png';
 import './Sidebar.css';
 
@@ -25,6 +25,11 @@ const Sidebar = () => {
         <NavLink to="/saved" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           <Save size={20} />
           <span>Saved Tests</span>
+        </NavLink>
+
+        <NavLink to="/past-papers" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <Library size={20} />
+          <span>Past Papers</span>
         </NavLink>
 
         <div className="nav-divider"></div>
