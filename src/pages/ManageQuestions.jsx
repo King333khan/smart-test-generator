@@ -8,7 +8,9 @@ const ManageQuestions = () => {
     const [chapter, setChapter] = useState('');
     const [type, setType] = useState('mcq');
 
-    const [bulkText, setBulkText] = useState('');
+    const [enText, setEnText] = useState('');
+    const [urText, setUrText] = useState('');
+    const [options, setOptions] = useState(['', '', '', '']);
 
     // Saved questions across classes/chapters (from localStorage)
     const [savedCustomQuestions, setSavedCustomQuestions] = useState({});
@@ -20,66 +22,21 @@ const ManageQuestions = () => {
         setSavedCustomQuestions(localBank);
     }, []);
 
+    const handleAutoTranslate = async () => {
+        if (!enText) return;
+        // Mock translation for simplicity without external API keys. In a real app, you'd call an API here.
+        // We will just leave it up to the user or provide a basic stub.
+        alert('Auto-translate would connect to a translation API here (e.g. Google Translate). For now, please enter Urdu manually if needed.');
+    };
+
     const handleSave = () => {
-        if (!cls || !subject || !chapter || !bulkText.trim()) return;
+        if (!cls || !subject || !chapter || !enText.trim()) return;
 
-        // Parse lines
-        const lines = bulkText.split('\n').filter(line => line.trim() !== '');
-
-        const newQuestions = [];
-
-        if (type === 'mcq') {
-            // For MCQs, users often paste: 
-            // Question ?
-            // A) option 1
-            // B) option 2
-            // C) option 3
-            // D) option 4
-            // Let's try to group them in blocks of 5 if they paste like that.
-            // Or if it's single line delimited by some char, but block of 5 is common.
-
-            // Simple heuristic: read line by line. If a line doesn't start with A/B/C/D, it's a question.
-            let currentQ = null;
-            let optionsCollected = 0;
-
-            for (let line of lines) {
-                const trimmed = line.trim();
-                const isOption = /^[A-D][\.\)\-]/i.test(trimmed);
-
-                if (!isOption && optionsCollected === 0) {
-                    // Start of a new question
-                    if (currentQ) {
-                        newQuestions.push(currentQ);
-                    }
-                    currentQ = { en: trimmed, ur: "", options: ['', '', '', ''] };
-                    optionsCollected = 0;
-                } else if (!isOption && optionsCollected > 0 && optionsCollected < 4) {
-                    // Could be multiline question or something weird, just ignore to keep simple
-                } else if (isOption && currentQ) {
-                    // Extract just the option text, removing the A) part
-                    const optText = trimmed.replace(/^[A-D][\.\)\-]\s*/i, '');
-                    currentQ.options[optionsCollected] = optText;
-                    optionsCollected++;
-
-                    if (optionsCollected === 4) {
-                        newQuestions.push(currentQ);
-                        currentQ = null;
-                        optionsCollected = 0;
-                    }
-                } else if (!isOption && !currentQ) {
-                    // Start new Q
-                    currentQ = { en: trimmed, ur: "", options: ['', '', '', ''] };
-                }
-            }
-            // Push any remaining
-            if (currentQ) newQuestions.push(currentQ);
-
-        } else {
-            // Short / Long are just 1 line per question
-            lines.forEach(line => {
-                newQuestions.push({ en: line.trim(), ur: "" });
-            });
-        }
+        const newQuestion = {
+            en: enText.trim(),
+            ur: urText.trim(),
+            ...(type === 'mcq' && { options: [...options] })
+        };
 
         // Structure creation
         const clsSubj = `${cls}_${subject}`;
@@ -89,11 +46,15 @@ const ManageQuestions = () => {
         if (!currentBank[clsSubj][chapter]) currentBank[clsSubj][chapter] = { mcq: [], short: [], long: [] };
 
         // Append
-        currentBank[clsSubj][chapter][type] = [...(currentBank[clsSubj][chapter][type] || []), ...newQuestions];
+        currentBank[clsSubj][chapter][type] = [...(currentBank[clsSubj][chapter][type] || []), newQuestion];
 
         localStorage.setItem('customQuestionBank', JSON.stringify(currentBank));
         setSavedCustomQuestions(currentBank);
-        setBulkText(''); // Clear input
+
+        // Clear input form safely
+        setEnText('');
+        setUrText('');
+        setOptions(['', '', '', '']);
 
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
@@ -110,8 +71,8 @@ const ManageQuestions = () => {
                     <Library size={24} />
                 </div>
                 <div>
-                    <h1 style={{ fontSize: '1.5rem', margin: 0 }}>Manage Question Bank</h1>
-                    <p className="text-muted" style={{ margin: 0 }}>Add bulk questions to your personal database.</p>
+                    <h1 style={{ fontSize: '1.5rem', margin: 0 }}>Add to Question Bank</h1>
+                    <p className="text-muted" style={{ margin: 0 }}>Add custom questions one by one easily.</p>
                 </div>
             </div>
 
@@ -155,24 +116,71 @@ const ManageQuestions = () => {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                        <label>Paste Questions (One question per line)</label>
-                        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-                            Currently stored in this category: <strong>{existingCount}</strong> questions.
-                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                            <label style={{ margin: 0 }}>English Question</label>
+                            <span className="text-muted" style={{ fontSize: '0.85rem' }}>
+                                Currently stored: <strong>{existingCount}</strong> questions
+                            </span>
+                        </div>
                         <textarea
                             className="form-input"
-                            rows="10"
-                            placeholder="Type or paste your questions here..."
-                            value={bulkText}
-                            onChange={(e) => setBulkText(e.target.value)}
+                            rows="2"
+                            placeholder="Type English question here..."
+                            value={enText}
+                            onChange={(e) => setEnText(e.target.value)}
+                            style={{ marginBottom: '0.5rem' }}
                         ></textarea>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.5rem' }}>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={handleAutoTranslate}
+                                style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
+                                disabled={!enText}
+                            >
+                                Auto Translate to Urdu
+                            </button>
+                        </div>
+
+                        <label>Urdu Translation (Optional)</label>
+                        <textarea
+                            className="form-input"
+                            rows="2"
+                            placeholder="اردو میں سوال لکھیں (اختیاری)"
+                            value={urText}
+                            onChange={(e) => setUrText(e.target.value)}
+                            style={{ fontFamily: "'Jameel Noori Nastaleeq', Arial, sans-serif", direction: 'rtl', fontSize: '1.2rem', marginBottom: '1rem' }}
+                        ></textarea>
+
+                        {type === 'mcq' && (
+                            <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                                <label style={{ marginBottom: '1rem', display: 'block' }}>MCQ Options</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                    {[0, 1, 2, 3].map((optIndex) => (
+                                        <div key={optIndex} className="form-group" style={{ marginBottom: 0 }}>
+                                            <input
+                                                type="text"
+                                                className="form-input"
+                                                placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
+                                                value={options[optIndex]}
+                                                onChange={(e) => {
+                                                    const newOpts = [...options];
+                                                    newOpts[optIndex] = e.target.value;
+                                                    setOptions(newOpts);
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <button className="btn" onClick={handleSave} disabled={!bulkText.trim()}>
-                            <Save size={18} /> Save Questions to Bank
+                        <button className="btn" onClick={handleSave} disabled={!enText.trim()}>
+                            <Save size={18} /> Add Question
                         </button>
-                        {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500' }}>✓ Saved successfully!</span>}
+                        {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500' }}>✓ Added successfully!</span>}
                     </div>
                 </div>
             )}
