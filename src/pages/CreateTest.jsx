@@ -455,7 +455,6 @@ const CreateTest = () => {
                                                             <div className="mcq-en">{i + 1}. {q.en}</div>
                                                             <div className="mcq-ur">{q.ur} .{i + 1}</div>
                                                         </div>
-                                                        </div>
                                                         <div className="mcq-options-row">
                                                             <div>(A) {q.options?.[0] || 'Option 1'}</div>
                                                             <div>(B) {q.options?.[1] || 'Option 2'}</div>
@@ -463,7 +462,8 @@ const CreateTest = () => {
                                                             <div>(D) {q.options?.[3] || 'Option 4'}</div>
                                                         </div>
                                                     </div>
-                                                )})}
+                                                )
+                                            })}
                                             {testData.customQs.filter(q => q.type === 'mcq').map((q, i) => (
                                                 <div key={q.id} className="dual-mcq-item">
                                                     <div className="mcq-question-row">

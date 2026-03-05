@@ -26,11 +26,60 @@ const ManageQuestions = () => {
         // Parse lines
         const lines = bulkText.split('\n').filter(line => line.trim() !== '');
 
-        const newQuestions = lines.map(line => {
-            // Basic parsing: Assuming user paste formats. For MCQs, they might just type the question, no options for now to keep simple, or a format we parse.
-            // We'll store exactly what they wrote as English text for now. (Can be enhanced later)
-            return { en: line.trim(), ur: "" };
-        });
+        const newQuestions = [];
+
+        if (type === 'mcq') {
+            // For MCQs, users often paste: 
+            // Question ?
+            // A) option 1
+            // B) option 2
+            // C) option 3
+            // D) option 4
+            // Let's try to group them in blocks of 5 if they paste like that.
+            // Or if it's single line delimited by some char, but block of 5 is common.
+
+            // Simple heuristic: read line by line. If a line doesn't start with A/B/C/D, it's a question.
+            let currentQ = null;
+            let optionsCollected = 0;
+
+            for (let line of lines) {
+                const trimmed = line.trim();
+                const isOption = /^[A-D][\.\)\-]/i.test(trimmed);
+
+                if (!isOption && optionsCollected === 0) {
+                    // Start of a new question
+                    if (currentQ) {
+                        newQuestions.push(currentQ);
+                    }
+                    currentQ = { en: trimmed, ur: "", options: ['', '', '', ''] };
+                    optionsCollected = 0;
+                } else if (!isOption && optionsCollected > 0 && optionsCollected < 4) {
+                    // Could be multiline question or something weird, just ignore to keep simple
+                } else if (isOption && currentQ) {
+                    // Extract just the option text, removing the A) part
+                    const optText = trimmed.replace(/^[A-D][\.\)\-]\s*/i, '');
+                    currentQ.options[optionsCollected] = optText;
+                    optionsCollected++;
+
+                    if (optionsCollected === 4) {
+                        newQuestions.push(currentQ);
+                        currentQ = null;
+                        optionsCollected = 0;
+                    }
+                } else if (!isOption && !currentQ) {
+                    // Start new Q
+                    currentQ = { en: trimmed, ur: "", options: ['', '', '', ''] };
+                }
+            }
+            // Push any remaining
+            if (currentQ) newQuestions.push(currentQ);
+
+        } else {
+            // Short / Long are just 1 line per question
+            lines.forEach(line => {
+                newQuestions.push({ en: line.trim(), ur: "" });
+            });
+        }
 
         // Structure creation
         const clsSubj = `${cls}_${subject}`;
