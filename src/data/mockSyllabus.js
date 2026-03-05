@@ -388,6 +388,136 @@ export const CHAPTERS = {
         { id: 'ch2', name: '2. Solving a Biological Problem' },
         { id: 'ch3', name: '3. Biodiversity' }
     ],
+    '9_math': [
+        {
+            id: 'ch1',
+            name: 'UNIT 1: Real Numbers',
+            topics: [
+                { id: 'ch1_t1', name: 'Exercise 1.1' },
+                { id: 'ch1_t2', name: 'Exercise 1.2' },
+                { id: 'ch1_t3', name: 'Exercise 1.3' },
+                { id: 'ch1_rev', name: 'Review Exercise 1' }
+            ]
+        },
+        {
+            id: 'ch2',
+            name: 'UNIT 2: Logarithms',
+            topics: [
+                { id: 'ch2_t1', name: 'Exercise 2.1' },
+                { id: 'ch2_t2', name: 'Exercise 2.2' },
+                { id: 'ch2_t3', name: 'Exercise 2.3' },
+                { id: 'ch2_t4', name: 'Exercise 2.4' },
+                { id: 'ch2_rev', name: 'Review Exercise 2' }
+            ]
+        },
+        {
+            id: 'ch3',
+            name: 'UNIT 3: Set and Functions',
+            topics: [
+                { id: 'ch3_t1', name: 'Exercise 3.1' },
+                { id: 'ch3_t2', name: 'Exercise 3.2' },
+                { id: 'ch3_t3', name: 'Exercise 3.3' },
+                { id: 'ch3_rev', name: 'Review Exercise 3' }
+            ]
+        },
+        {
+            id: 'ch4',
+            name: 'UNIT 4: Factorization and Algebraic Manipulation',
+            topics: [
+                { id: 'ch4_t1', name: 'Exercise 4.1' },
+                { id: 'ch4_t2', name: 'Exercise 4.2' },
+                { id: 'ch4_t3', name: 'Exercise 4.3' },
+                { id: 'ch4_t4', name: 'Exercise 4.4' },
+                { id: 'ch4_rev', name: 'Review Exercise 4' }
+            ]
+        },
+        {
+            id: 'ch5',
+            name: 'UNIT 5: Linear Equations and Inequalities',
+            topics: [
+                { id: 'ch5_t1', name: 'Exercise 5.1' },
+                { id: 'ch5_t2', name: 'Exercise 5.2' },
+                { id: 'ch5_rev', name: 'Review Exercise 5' }
+            ]
+        },
+        {
+            id: 'ch6',
+            name: 'UNIT 6: Trigonometry',
+            topics: [
+                { id: 'ch6_t1', name: 'Exercise 6.1' },
+                { id: 'ch6_t2', name: 'Exercise 6.2' },
+                { id: 'ch6_t3', name: 'Exercise 6.3' },
+                { id: 'ch6_t4', name: 'Exercise 6.4' },
+                { id: 'ch6_t5', name: 'Exercise 6.5' },
+                { id: 'ch6_t6', name: 'Exercise 6.6' },
+                { id: 'ch6_rev', name: 'Review Exercise 6' }
+            ]
+        },
+        {
+            id: 'ch7',
+            name: 'UNIT 7: Coordinate Geometry',
+            topics: [
+                { id: 'ch7_t1', name: 'Exercise 7.1' },
+                { id: 'ch7_t2', name: 'Exercise 7.2' },
+                { id: 'ch7_t3', name: 'Exercise 7.3' },
+                { id: 'ch7_rev', name: 'Review Exercise 7' }
+            ]
+        },
+        {
+            id: 'ch8',
+            name: 'UNIT 8: Logic',
+            topics: [
+                { id: 'ch8_t1', name: 'Exercise 8.1' }
+            ]
+        },
+        {
+            id: 'ch9',
+            name: 'UNIT 9: Similar Figures',
+            topics: [
+                { id: 'ch9_t1', name: 'Exercise 9.1' },
+                { id: 'ch9_t2', name: 'Exercise 9.2' },
+                { id: 'ch9_t3', name: 'Exercise 9.3' },
+                { id: 'ch9_t4', name: 'Exercise 9.4' },
+                { id: 'ch9_rev', name: 'Review Exercise 9' }
+            ]
+        },
+        {
+            id: 'ch10',
+            name: 'UNIT 10: Graphs of Functions',
+            topics: [
+                { id: 'ch10_t1', name: 'Exercise 10.1' },
+                { id: 'ch10_t2', name: 'Exercise 10.2' },
+                { id: 'ch10_rev', name: 'Review Exercise 10' }
+            ]
+        },
+        {
+            id: 'ch11',
+            name: 'UNIT 11: Loci and Construction',
+            topics: [
+                { id: 'ch11_t1', name: 'Exercise 11.1' },
+                { id: 'ch11_t2', name: 'Exercise 11.2' },
+                { id: 'ch11_rev', name: 'Review Exercise 11' }
+            ]
+        },
+        {
+            id: 'ch12',
+            name: 'UNIT 12: Information Handling',
+            topics: [
+                { id: 'ch12_t1', name: 'Exercise 12.1' },
+                { id: 'ch12_t2', name: 'Exercise 12.2' },
+                { id: 'ch12_rev', name: 'Review Exercise 12' }
+            ]
+        },
+        {
+            id: 'ch13',
+            name: 'UNIT 13: Probability',
+            topics: [
+                { id: 'ch13_t1', name: 'Exercise 13.1' },
+                { id: 'ch13_t2', name: 'Exercise 13.2' },
+                { id: 'ch13_rev', name: 'Review Exercise 13' }
+            ]
+        }
+    ],
     '10_math': [
         { id: 'ch1', name: '1. Quadratic Equations' },
         { id: 'ch2', name: '2. Theory of Quadratic Equations' },
