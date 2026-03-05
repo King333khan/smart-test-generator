@@ -38,6 +38,26 @@ const Dashboard = () => {
             }
         }
 
+        // Calculate distribution by class
+        const classStats = {};
+        let totalClassTests = 0;
+        saved.forEach(test => {
+            if (test.cls) {
+                classStats[test.cls] = (classStats[test.cls] || 0) + 1;
+                totalClassTests++;
+            }
+        });
+
+        const classDistribution = Object.keys(classStats).map(clsId => {
+            const percentage = totalClassTests > 0 ? Math.round((classStats[clsId] / totalClassTests) * 100) : 0;
+            return {
+                id: clsId,
+                name: CLASSES.find(c => c.id === clsId)?.name || clsId,
+                count: classStats[clsId],
+                percentage
+            };
+        }).sort((a, b) => b.count - a.count);
+
         let popularSubjectName = 'N/A';
         if (mostPopularSubjKey) {
             const [clsId, subId] = mostPopularSubjKey.split('_');
@@ -52,6 +72,7 @@ const Dashboard = () => {
             testsToday,
             totalTests: saved.length,
             popularSubject: popularSubjectName,
+            classDistribution,
             recentActivity: saved.slice(0, 5) // Top 5 newest
         });
     }, []);
@@ -83,37 +104,73 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div style={{ marginTop: '3rem' }}>
-                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Activity size={20} className="text-muted" /> Recent Activity
-                </h2>
+            <div style={{ marginTop: '3rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                {/* Recent Activity */}
+                <div>
+                    <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Activity size={20} className="text-muted" /> Recent Activity
+                    </h2>
 
-                {stats.recentActivity.length === 0 ? (
-                    <div className="glass" style={{ padding: '2rem', borderRadius: '0.5rem', background: 'white', textAlign: 'center' }}>
-                        <p className="text-muted">No recent activity found. Generate a test to see it here.</p>
-                    </div>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {stats.recentActivity.map(test => (
-                            <div key={test.id} className="glass" style={{ padding: '1rem 1.5rem', borderRadius: '0.5rem', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <div style={{ background: 'rgba(79, 70, 229, 0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary-color)' }}>
-                                        <FileText size={20} />
+                    {stats.recentActivity.length === 0 ? (
+                        <div className="glass" style={{ padding: '2rem', borderRadius: '0.5rem', background: 'white', textAlign: 'center' }}>
+                            <p className="text-muted">No recent activity found. Generate a test to see it here.</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {stats.recentActivity.map(test => (
+                                <div key={test.id} className="glass" style={{ padding: '1rem 1.5rem', borderRadius: '0.5rem', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <div style={{ background: 'rgba(79, 70, 229, 0.1)', padding: '0.75rem', borderRadius: '50%', color: 'var(--primary-color)' }}>
+                                            <FileText size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '600' }}>{test.testTitle}</h4>
+                                            <p className="text-muted" style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem' }}>
+                                                {getClassName(test.cls)} • {getSubjectName(test.cls, test.subject)}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '600' }}>{test.testTitle}</h4>
-                                        <p className="text-muted" style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem' }}>
-                                            {getClassName(test.cls)} • {getSubjectName(test.cls, test.subject)}
-                                        </p>
+                                    <div className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                                        <Calendar size={14} /> {formatDate(test.dateCreated)}
                                     </div>
                                 </div>
-                                <div className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                                    <Calendar size={14} /> {formatDate(test.dateCreated)}
-                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Class Distribution Analytics */}
+                <div>
+                    <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Activity size={20} className="text-muted" /> Tests Distribution
+                    </h2>
+
+                    <div className="glass" style={{ padding: '1.5rem', borderRadius: '0.75rem', background: 'white' }}>
+                        {!stats.classDistribution?.length ? (
+                            <p className="text-muted" style={{ textAlign: 'center', padding: '1rem 0' }}>Not enough data yet.</p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                {stats.classDistribution.map(item => (
+                                    <div key={item.id}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                            <span style={{ fontWeight: '600' }}>{item.name}</span>
+                                            <span className="text-muted">{item.count} tests ({item.percentage}%)</span>
+                                        </div>
+                                        <div style={{ width: '100%', backgroundColor: 'var(--bg-color)', borderRadius: '999px', height: '0.5rem', overflow: 'hidden' }}>
+                                            <div style={{
+                                                width: `${item.percentage}%`,
+                                                backgroundColor: 'var(--primary-color)',
+                                                height: '100%',
+                                                borderRadius: '999px',
+                                                transition: 'width 1s ease-in-out'
+                                            }}></div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

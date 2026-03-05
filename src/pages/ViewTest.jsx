@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download } from 'lucide-react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
 import './CreateTest.css';
 
@@ -64,6 +64,61 @@ const ViewTest = () => {
         }));
     };
 
+    const exportToWord = () => {
+        if (!paperRef.current) return;
+
+        // Header & Footer for MS Word compatibility
+        const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <title>Export HTML To Doc</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    line-height: ${settings.lineHeight};
+                    margin: 20px;
+                }
+                .institute-title { text-align: ${settings.headerStyle === 'centered' ? 'center' : 'left'}; font-size: 24pt; font-weight: bold; }
+                .test-subtitle { text-align: ${settings.headerStyle === 'centered' ? 'center' : 'left'}; font-size: 16pt; font-weight: bold; }
+                .paper-meta { display: flex; justify-content: space-between; margin-bottom: 20px; }
+                .dual-lang-header { margin-top: 15px; margin-bottom: 10px; font-weight: bold; }
+                .en { text-align: left; direction: ltr; }
+                .ur { text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Arial', sans-serif; font-size: 14pt; }
+                .mcq-question-row, .dual-subjective-q { display: flex; justify-content: space-between; margin-bottom: 5px; }
+                .mcq-options-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+                .mcq-en { flex: 1; text-align: left; }
+                .mcq-ur { flex: 1; text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Arial', sans-serif;}
+                hr { border: 0; border-bottom: 1px dashed #ccc; margin: 15px 0; }
+                @page { size: A4; margin: 1in; }
+            </style>
+        </head><body>`;
+
+        const content = paperRef.current.innerHTML;
+        const postHtml = "</body></html>";
+        const html = preHtml + content + postHtml;
+
+        const blob = new Blob(['\ufeff', html], {
+            type: 'application/msword'
+        });
+
+        // Create a link and trigger download
+        const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+        const filename = testData.testTitle ? `${testData.testTitle.replace(/\s+/g, '_')}.doc` : 'Test_Paper.doc';
+
+        const downloadLink = document.createElement("a");
+        document.body.appendChild(downloadLink);
+
+        if (navigator.msSaveOrOpenBlob) {
+            navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+            downloadLink.href = url;
+            downloadLink.download = filename;
+            downloadLink.click();
+        }
+
+        document.body.removeChild(downloadLink);
+    };
+
     if (!testData) return (
         <div className="glass" style={{ padding: '2rem', textAlign: 'center', minHeight: 'calc(100vh - 4rem)' }}>
             <h2>Test not found or could not be loaded.</h2>
@@ -99,6 +154,9 @@ const ViewTest = () => {
                         {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500', fontSize: '0.9rem' }}>✓ Saved changes</span>}
                         <button className="btn btn-secondary" onClick={handleSave}>
                             <Save size={16} /> Save Edits
+                        </button>
+                        <button className="btn btn-secondary" onClick={exportToWord} style={{ color: '#2563eb', borderColor: '#bfdbfe' }}>
+                            <Download size={16} /> Download Word
                         </button>
                         <button className="btn" onClick={() => window.print()}>
                             <Printer size={16} /> Print Test

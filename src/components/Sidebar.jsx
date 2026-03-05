@@ -1,9 +1,32 @@
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, FileSignature, Save, Settings, Library } from 'lucide-react';
+import { Home, FileSignature, Save, Settings, Library, Moon, Sun } from 'lucide-react';
 import appLogo from '../assets/logo.png';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check local storage for theme preference on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.body.classList.add('dark-mode');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    if (!isDarkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
   return (
     <div className="sidebar glass no-print">
       <div className="sidebar-logo">
@@ -40,8 +63,16 @@ const Sidebar = () => {
         </NavLink>
       </nav>
 
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
         <p className="text-muted text-sm">v1.0.0</p>
+        <button
+          onClick={toggleTheme}
+          className="btn btn-secondary"
+          style={{ padding: '0.5rem', border: 'none', background: 'transparent' }}
+          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {isDarkMode ? <Sun size={18} className="text-muted" /> : <Moon size={18} className="text-muted" />}
+        </button>
       </div>
     </div>
   );
