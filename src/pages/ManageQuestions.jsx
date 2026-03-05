@@ -159,6 +159,28 @@ const ManageQuestions = () => {
                                         style={{ fontFamily: "'Jameel Noori Nastaleeq', Arial, sans-serif", direction: 'rtl', fontSize: '1.2rem' }}
                                     />
                                 </div>
+                                {type === 'mcq' && (
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                        {[0, 1, 2, 3].map((optIndex) => (
+                                            <input
+                                                key={optIndex}
+                                                type="text"
+                                                className="form-input"
+                                                placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
+                                                value={q.options?.[optIndex] || ''}
+                                                onChange={(e) => {
+                                                    const newBank = { ...savedCustomQuestions };
+                                                    if (!newBank[clsSubj][chapter][type][index].options) {
+                                                        newBank[clsSubj][chapter][type][index].options = ['', '', '', ''];
+                                                    }
+                                                    newBank[clsSubj][chapter][type][index].options[optIndex] = e.target.value;
+                                                    setSavedCustomQuestions(newBank);
+                                                }}
+                                                style={{ fontSize: '0.9rem', padding: '0.5rem' }}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <button
                                         className="btn btn-secondary"

@@ -277,10 +277,10 @@ const ViewTest = () => {
                                                     <div className="mcq-ur">{q.ur} .{i + 1}</div>
                                                 </div>
                                                 <div className="mcq-options-row">
-                                                    <div>(A) Option 1</div>
-                                                    <div>(B) Option 2</div>
-                                                    <div>(C) Option 3</div>
-                                                    <div>(D) Option 4</div>
+                                                    <div>(A) {q.options?.[0] || 'Option 1'}</div>
+                                                    <div>(B) {q.options?.[1] || 'Option 2'}</div>
+                                                    <div>(C) {q.options?.[2] || 'Option 3'}</div>
+                                                    <div>(D) {q.options?.[3] || 'Option 4'}</div>
                                                 </div>
                                             </div>
                                         )
@@ -292,10 +292,10 @@ const ViewTest = () => {
                                                 <div className="mcq-ur">{q.ur || "کسٹم ایم سی کیو"} .{testData.config.mcqs + i + 1}</div>
                                             </div>
                                             <div className="mcq-options-row">
-                                                <div>(A)</div>
-                                                <div>(B)</div>
-                                                <div>(C)</div>
-                                                <div>(D)</div>
+                                                <div>(A) {q.options?.[0] || ''}</div>
+                                                <div>(B) {q.options?.[1] || ''}</div>
+                                                <div>(C) {q.options?.[2] || ''}</div>
+                                                <div>(D) {q.options?.[3] || ''}</div>
                                             </div>
                                         </div>
                                     ))}
