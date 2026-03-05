@@ -384,9 +384,151 @@ export const CHAPTERS = {
         }
     ],
     '9_bio': [
-        { id: 'ch1', name: '1. Introduction to Biology' },
-        { id: 'ch2', name: '2. Solving a Biological Problem' },
-        { id: 'ch3', name: '3. Biodiversity' }
+        {
+            id: 'ch1',
+            name: 'CHAP 1: The Science of Biology',
+            topics: [
+                { id: 'ch1_t1', name: '1.1 Biology and its Branches' },
+                { id: 'ch1_t2', name: '1.2 Relation of Biology With Other Sciences' },
+                { id: 'ch1_t3', name: '1.3 Careers in Biology' },
+                { id: 'ch1_t4', name: '1.4 Quranic Instructions to Reveal the Study of Life' },
+                { id: 'ch1_t5', name: '1.5 Science as a Collaborative Field' },
+                { id: 'ch1_t6', name: '1.6 Scientific Method' },
+                { id: 'ch1_t7', name: '1.7 Theory and Law/Principle' },
+                { id: 'ch1_t8', name: '1.8 Malaria-An Example of Biological Method' },
+                { id: 'ch1_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch2',
+            name: 'CHAP 2: Biodiversity',
+            topics: [
+                { id: 'ch2_t1', name: '2.1 Biodiversity' },
+                { id: 'ch2_t2', name: '2.2 Classification' },
+                { id: 'ch2_t3', name: '2.3 Taxonomic Ranks' },
+                { id: 'ch2_t4', name: '2.4 History of Classification' },
+                { id: 'ch2_t5', name: '2.5 Domains of Living Organisms' },
+                { id: 'ch2_t6', name: '2.6 Classification of Domain Eukarya' },
+                { id: 'ch2_t7', name: '2.7 Status of Virus in Classification' },
+                { id: 'ch2_t8', name: '2.8 Binomial Nomenclature' }
+            ]
+        },
+        {
+            id: 'ch3',
+            name: 'CHAP 3: The Cell',
+            topics: [
+                { id: 'ch3_t1', name: '3.1 Cell' },
+                { id: 'ch3_t2', name: '3.2 Structure of Cell' },
+                { id: 'ch3_t3', name: '3.2.1 Cell Wall' },
+                { id: 'ch3_t4', name: '3.2.2 Cell Membrane' },
+                { id: 'ch3_t5', name: '3.2.3 Cytoplasm' },
+                { id: 'ch3_t6', name: '3.2.4 Nucleus' },
+                { id: 'ch3_t7', name: '3.2.5 Cytoskeleton' },
+                { id: 'ch3_t8', name: '3.2.6 Ribosome' },
+                { id: 'ch3_t9', name: '3.2.7 Endoplasmic Reticulum' },
+                { id: 'ch3_t10', name: '3.2.8 Golgi Apparatus' },
+                { id: 'ch3_t11', name: '3.2.9 Lysosomes' },
+                { id: 'ch3_t12', name: '3.2.10 Mitochondria' },
+                { id: 'ch3_t13', name: '3.2.11 Plasitids' },
+                { id: 'ch3_t14', name: '3.2.12 Vacuoles' },
+                { id: 'ch3_t15', name: '3.2.13 Centrioles' },
+                { id: 'ch3_t16', name: '3.3 STRUCTURAL ADVANTAGES OF PLANT AND ANIMAL CELLS' },
+                { id: 'ch3_t17', name: '3.4 CELL SPECIALIZATION' },
+                { id: 'ch3_t18', name: '5.5 Stem Cells' }
+            ]
+        },
+        {
+            id: 'ch4',
+            name: 'CHAP 4: Cell Cycle',
+            topics: [
+                { id: 'ch4_t1', name: '4.1 Cell Cycle' },
+                { id: 'ch4_t2', name: '4.2 Mitosis' },
+                { id: 'ch4_t3', name: '4.2.1 Phases Of Mitosis' },
+                { id: 'ch4_t4', name: '4.2.2 Significance Of Mitosis' },
+                { id: 'ch4_t5', name: '4.3 Meiosis' },
+                { id: 'ch4_t6', name: '4.3.1 Phases Of Meiosis' },
+                { id: 'ch4_t7', name: '4.3.2 Significance Of Meiosis' },
+                { id: 'ch4_t8', name: '4.4 Comparison between Meiosis and Mitosis' }
+            ]
+        },
+        {
+            id: 'ch5',
+            name: 'CHAP 5: Tissues, Organs, And Organ System',
+            topics: [
+                { id: 'ch5_t1', name: '5.1 Levels of Organization' },
+                { id: 'ch5_t2', name: '5.2 Organs and Organ system in Plants' },
+                { id: 'ch5_t3', name: '5.3 Organs and Organ system in Humans' },
+                { id: 'ch5_t4', name: '5.4 Homeostasis' }
+            ]
+        },
+        {
+            id: 'ch6',
+            name: 'CHAP 6: Biomolecules',
+            topics: [
+                { id: 'ch6_t1', name: '6.1 Biomolecules' },
+                { id: 'ch6_t2', name: '6.2 Carbohydrates' },
+                { id: 'ch6_t3', name: '6.3 Proteins' },
+                { id: 'ch6_t4', name: '6.4 Lipids' },
+                { id: 'ch6_t5', name: '6.5 Nucleic Acids' },
+                { id: 'ch6_t6', name: '6.6 The Working of DNA and RNA' }
+            ]
+        },
+        {
+            id: 'ch7',
+            name: 'CHAP 7: Enzymes',
+            topics: [
+                { id: 'ch7_t1', name: '7.1 Metabolism' },
+                { id: 'ch7_t2', name: '7.2 Enzymes' },
+                { id: 'ch7_t3', name: '7.3 Mechanism of Enzyme Action' },
+                { id: 'ch7_t4', name: '7.4 Factors that Affect the Activity of Enzymes' },
+                { id: 'ch7_t5', name: '7.5 Enzyme Inhibition' }
+            ]
+        },
+        {
+            id: 'ch8',
+            name: 'CHAP 8: Bioenergetics',
+            topics: [
+                { id: 'ch8_t1', name: '8.1 ATP: The Cell\'s Energy Currency' },
+                { id: 'ch8_t2', name: '8.2 Photosynthesis' },
+                { id: 'ch8_t3', name: '8.3 Cellular Respiration' },
+                { id: 'ch8_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch9',
+            name: 'CHAP 9: Plant Physiology',
+            topics: [
+                { id: 'ch9_t1', name: '9.1 Nutrition in Plants' },
+                { id: 'ch9_t2', name: '9.2 Transport in Plants' },
+                { id: 'ch9_t3', name: '9.3 Transpiration' },
+                { id: 'ch9_t4', name: '9.4 Transport of Water and salts in Plants' },
+                { id: 'ch9_t5', name: '9.5 Translocation of Food in Plants' },
+                { id: 'ch9_t6', name: '9.6 Gaseous Exchange in Plants' },
+                { id: 'ch9_t7', name: '9.7 Mechanisms for Excretion in Plants' },
+                { id: 'ch9_t8', name: '9.8 Osmotic Adjustments in Plants' },
+                { id: 'ch9_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch10',
+            name: 'CHAP 10: Reproduction In Plants',
+            topics: [
+                { id: 'ch10_t1', name: '10.1 Types of Asexual Reproduction' },
+                { id: 'ch10_t2', name: '10.2 Artificial Propagation' },
+                { id: 'ch10_t3', name: '10.3 Sexual Reproduction in Plants' },
+                { id: 'ch10_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch11',
+            name: 'CHAP 11: Biostatistics',
+            topics: [
+                { id: 'ch11_t1', name: '11.1 Introduction of Biostatistics' },
+                { id: 'ch11_t2', name: '11.2 Mean, Median, and Mode' },
+                { id: 'ch11_t3', name: '11.3 Bar Chart' },
+                { id: 'ch11_ex', name: 'Exercise' }
+            ]
+        }
     ],
     '9_math': [
         {
