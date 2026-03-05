@@ -127,6 +127,71 @@ const ManageQuestions = () => {
                     </div>
                 </div>
             )}
+
+            {chapter && existingCount > 0 && (
+                <div className="fade-in" style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border-color)' }}>
+                    <h2>Saved {type.toUpperCase()} Questions</h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                        {savedCustomQuestions[clsSubj][chapter][type].map((q, index) => (
+                            <div key={index} className="glass" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                                <div style={{ flex: 1 }}>
+                                    <textarea
+                                        className="form-input"
+                                        rows="2"
+                                        value={q.en}
+                                        onChange={(e) => {
+                                            const newBank = { ...savedCustomQuestions };
+                                            newBank[clsSubj][chapter][type][index].en = e.target.value;
+                                            setSavedCustomQuestions(newBank);
+                                        }}
+                                        style={{ marginBottom: '0.5rem' }}
+                                    />
+                                    <textarea
+                                        className="form-input"
+                                        rows="2"
+                                        placeholder="Urdu translation (optional)"
+                                        value={q.ur || ''}
+                                        onChange={(e) => {
+                                            const newBank = { ...savedCustomQuestions };
+                                            newBank[clsSubj][chapter][type][index].ur = e.target.value;
+                                            setSavedCustomQuestions(newBank);
+                                        }}
+                                        style={{ fontFamily: "'Jameel Noori Nastaleeq', Arial, sans-serif", direction: 'rtl', fontSize: '1.2rem' }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={() => {
+                                            localStorage.setItem('customQuestionBank', JSON.stringify(savedCustomQuestions));
+                                            setIsSaved(true);
+                                            setTimeout(() => setIsSaved(false), 2000);
+                                        }}
+                                        title="Save Edits"
+                                    >
+                                        <Save size={16} />
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+                                        onClick={() => {
+                                            if (window.confirm('Are you sure you want to delete this question?')) {
+                                                const newBank = { ...savedCustomQuestions };
+                                                newBank[clsSubj][chapter][type].splice(index, 1);
+                                                setSavedCustomQuestions(newBank);
+                                                localStorage.setItem('customQuestionBank', JSON.stringify(newBank));
+                                            }
+                                        }}
+                                        title="Delete Question"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
