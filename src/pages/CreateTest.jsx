@@ -202,7 +202,7 @@ const CreateTest = () => {
                                                 checked={testData.chapters.includes(ch.id)}
                                                 onChange={() => toggleChapterOrTopic(ch.id, true, ch.topics?.map(t => t.id) || [])}
                                             />
-                                            <span>{ch.name}</span>
+                                            <span className={testData.subject === 'urd' ? 'urdu-text' : ''}>{ch.name}</span>
                                         </div>
                                         {ch.topics && ch.topics.length > 0 && (
                                             <button
@@ -223,7 +223,7 @@ const CreateTest = () => {
                                                         checked={testData.chapters.includes(topic.id)}
                                                         onChange={() => toggleChapterOrTopic(topic.id, false)}
                                                     />
-                                                    <span>{topic.name}</span>
+                                                    <span className={testData.subject === 'urd' ? 'urdu-text' : ''}>{topic.name}</span>
                                                 </label>
                                             ))}
                                         </div>

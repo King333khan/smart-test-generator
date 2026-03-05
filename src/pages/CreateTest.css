@@ -21,6 +21,13 @@
     margin-bottom: 0.5rem;
 }
 
+/* Urdu Text Support */
+.urdu-text {
+    font-family: 'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Urdu Typesetting', Arial, sans-serif !important;
+    font-size: 1.2rem;
+    line-height: 1.8;
+}
+
 /* Step Indicator */
 .step-indicator {
     display: flex;
