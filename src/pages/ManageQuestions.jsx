@@ -5,6 +5,9 @@ import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 const ManageQuestions = () => {
     const [cls, setCls] = useState('');
     const [subject, setSubject] = useState('');
+    const [chapter, setChapter] = useState('');
+    const [type, setType] = useState('mcq');
+
     const [enText, setEnText] = useState('');
     const [urText, setUrText] = useState('');
     const [options, setOptions] = useState(['', '', '', '']);
@@ -16,7 +19,15 @@ const ManageQuestions = () => {
     const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
-        const localBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+        let localBank = {};
+        try {
+            const raw = localStorage.getItem('customQuestionBank');
+            if (raw && raw !== 'undefined') {
+                localBank = JSON.parse(raw);
+            }
+        } catch (e) {
+            console.error("Failed to parse local custom banks", e);
+        }
         setSavedCustomQuestions(localBank);
     }, []);
 
