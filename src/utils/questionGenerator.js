@@ -134,8 +134,13 @@ export const generateMockQuestion = (type, cls, subject, selectedChapterIds, ind
     // If we have a real question at this index, return it
     if (index < realQuestions.length) {
         const q = realQuestions[index];
-        // Ensure format is consistent { en: '', ur: '', options: [] }
-        return { en: q.en || '', ur: q.ur || '', options: q.options || ['', '', '', ''] };
+        // Ensure format is consistent { en: '', ur: '', options: [], urOptions: [] }
+        return {
+            en: q.en || '',
+            ur: q.ur || '',
+            options: q.options || ['', '', '', ''],
+            urOptions: q.urOptions || ['', '', '', '']
+        };
     }
 
     const topics = getSelectedTopicNames(cls, subject, selectedChapterIds);

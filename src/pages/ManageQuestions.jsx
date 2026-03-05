@@ -5,12 +5,10 @@ import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 const ManageQuestions = () => {
     const [cls, setCls] = useState('');
     const [subject, setSubject] = useState('');
-    const [chapter, setChapter] = useState('');
-    const [type, setType] = useState('mcq');
-
     const [enText, setEnText] = useState('');
     const [urText, setUrText] = useState('');
     const [options, setOptions] = useState(['', '', '', '']);
+    const [urOptions, setUrOptions] = useState(['', '', '', '']);
 
     // Saved questions across classes/chapters (from localStorage)
     const [savedCustomQuestions, setSavedCustomQuestions] = useState({});
@@ -35,7 +33,7 @@ const ManageQuestions = () => {
         const newQuestion = {
             en: enText.trim(),
             ur: urText.trim(),
-            ...(type === 'mcq' && { options: [...options] })
+            ...(type === 'mcq' && { options: [...options], urOptions: [...urOptions] })
         };
 
         // Structure creation
@@ -55,6 +53,7 @@ const ManageQuestions = () => {
         setEnText('');
         setUrText('');
         setOptions(['', '', '', '']);
+        setUrOptions(['', '', '', '']);
 
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
@@ -155,19 +154,31 @@ const ManageQuestions = () => {
                         {type === 'mcq' && (
                             <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                                 <label style={{ marginBottom: '1rem', display: 'block' }}>MCQ Options</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     {[0, 1, 2, 3].map((optIndex) => (
-                                        <div key={optIndex} className="form-group" style={{ marginBottom: 0 }}>
+                                        <div key={optIndex} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>
                                             <input
                                                 type="text"
                                                 className="form-input"
-                                                placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
+                                                placeholder={`Option ${String.fromCharCode(65 + optIndex)} (English)`}
                                                 value={options[optIndex]}
                                                 onChange={(e) => {
                                                     const newOpts = [...options];
                                                     newOpts[optIndex] = e.target.value;
                                                     setOptions(newOpts);
                                                 }}
+                                            />
+                                            <input
+                                                type="text"
+                                                className="form-input"
+                                                placeholder={`آپشن ${String.fromCharCode(65 + optIndex)} (Urdu)`}
+                                                value={urOptions[optIndex]}
+                                                onChange={(e) => {
+                                                    const newUrOpts = [...urOptions];
+                                                    newUrOpts[optIndex] = e.target.value;
+                                                    setUrOptions(newUrOpts);
+                                                }}
+                                                style={{ fontFamily: "'Jameel Noori Nastaleeq', Arial, sans-serif", direction: 'rtl', fontSize: '1.2rem' }}
                                             />
                                         </div>
                                     ))}
@@ -217,24 +228,40 @@ const ManageQuestions = () => {
                                     />
                                 </div>
                                 {type === 'mcq' && (
-                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                         {[0, 1, 2, 3].map((optIndex) => (
-                                            <input
-                                                key={optIndex}
-                                                type="text"
-                                                className="form-input"
-                                                placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
-                                                value={q.options?.[optIndex] || ''}
-                                                onChange={(e) => {
-                                                    const newBank = { ...savedCustomQuestions };
-                                                    if (!newBank[clsSubj][chapter][type][index].options) {
-                                                        newBank[clsSubj][chapter][type][index].options = ['', '', '', ''];
-                                                    }
-                                                    newBank[clsSubj][chapter][type][index].options[optIndex] = e.target.value;
-                                                    setSavedCustomQuestions(newBank);
-                                                }}
-                                                style={{ fontSize: '0.9rem', padding: '0.5rem' }}
-                                            />
+                                            <div key={optIndex} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                                <input
+                                                    type="text"
+                                                    className="form-input"
+                                                    placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
+                                                    value={q.options?.[optIndex] || ''}
+                                                    onChange={(e) => {
+                                                        const newBank = { ...savedCustomQuestions };
+                                                        if (!newBank[clsSubj][chapter][type][index].options) {
+                                                            newBank[clsSubj][chapter][type][index].options = ['', '', '', ''];
+                                                        }
+                                                        newBank[clsSubj][chapter][type][index].options[optIndex] = e.target.value;
+                                                        setSavedCustomQuestions(newBank);
+                                                    }}
+                                                    style={{ fontSize: '0.9rem', padding: '0.5rem' }}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="form-input"
+                                                    placeholder={`Urdu Option ${String.fromCharCode(65 + optIndex)}`}
+                                                    value={q.urOptions?.[optIndex] || ''}
+                                                    onChange={(e) => {
+                                                        const newBank = { ...savedCustomQuestions };
+                                                        if (!newBank[clsSubj][chapter][type][index].urOptions) {
+                                                            newBank[clsSubj][chapter][type][index].urOptions = ['', '', '', ''];
+                                                        }
+                                                        newBank[clsSubj][chapter][type][index].urOptions[optIndex] = e.target.value;
+                                                        setSavedCustomQuestions(newBank);
+                                                    }}
+                                                    style={{ fontFamily: "'Jameel Noori Nastaleeq', Arial, sans-serif", direction: 'rtl', fontSize: '1.2rem', padding: '0.5rem' }}
+                                                />
+                                            </div>
                                         ))}
                                     </div>
                                 )}

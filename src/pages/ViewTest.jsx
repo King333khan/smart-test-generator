@@ -276,11 +276,17 @@ const ViewTest = () => {
                                                     <div className="mcq-en">{i + 1}. {q.en}</div>
                                                     <div className="mcq-ur">{q.ur} .{i + 1}</div>
                                                 </div>
-                                                <div className="mcq-options-row">
-                                                    <div>(A) {q.options?.[0] || 'Option 1'}</div>
-                                                    <div>(B) {q.options?.[1] || 'Option 2'}</div>
-                                                    <div>(C) {q.options?.[2] || 'Option 3'}</div>
-                                                    <div>(D) {q.options?.[3] || 'Option 4'}</div>
+                                                <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
+                                                    {[0, 1, 2, 3].map(optIndex => (
+                                                        <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                                                            <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                            {q.urOptions?.[optIndex] && (
+                                                                <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                    {q.urOptions[optIndex]}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
                                         )
@@ -291,11 +297,17 @@ const ViewTest = () => {
                                                 <div className="mcq-en">{testData.config.mcqs + i + 1}. {q.en || "Custom MCQ"}</div>
                                                 <div className="mcq-ur">{q.ur || "کسٹم ایم سی کیو"} .{testData.config.mcqs + i + 1}</div>
                                             </div>
-                                            <div className="mcq-options-row">
-                                                <div>(A) {q.options?.[0] || ''}</div>
-                                                <div>(B) {q.options?.[1] || ''}</div>
-                                                <div>(C) {q.options?.[2] || ''}</div>
-                                                <div>(D) {q.options?.[3] || ''}</div>
+                                            <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
+                                                {[0, 1, 2, 3].map(optIndex => (
+                                                    <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                                                        <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                        {q.urOptions?.[optIndex] && (
+                                                            <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                {q.urOptions[optIndex]}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     ))}
