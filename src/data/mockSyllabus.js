@@ -58,6 +58,182 @@ export const SUBJECTS = {
 
 // Mock chapters based on typical PCTB syllabus
 export const CHAPTERS = {
+    '9_cs': [
+        {
+            id: 'ch1',
+            name: 'UNIT 1: Introduction to Systems',
+            topics: [
+                { id: 'ch1_t1', name: '1.1 Theory of Systems' },
+                { id: 'ch1_t2', name: '1.2 Types of Systems' },
+                { id: 'ch1_t3', name: '1.3 System and Science' },
+                { id: 'ch1_t4', name: '1.4 Computer as System' },
+                { id: 'ch1_t5', name: '1.5 The Architecture of von Neumann Computers' },
+                { id: 'ch1_t6', name: '1.6 Computing Systems' },
+                { id: 'ch1_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch2',
+            name: 'UNIT 2: Number Systems',
+            topics: [
+                { id: 'ch2_t1', name: '2.1 Numbering Systems' },
+                { id: 'ch2_t2', name: '2.2 Data Representation in Computing Systems' },
+                { id: 'ch2_t3', name: '2.3 Storing Real Values in Computer Memory' },
+                { id: 'ch2_t4', name: '2.4 Binary Arithmetic Operations' },
+                { id: 'ch2_t5', name: '2.5 Common Text Encoding Schemes' },
+                { id: 'ch2_t6', name: '2.6 Storing Images, Audio, and Video in Computers' }
+            ]
+        },
+        {
+            id: 'ch3',
+            name: 'UNIT 3: Digital Systems and Logic Design',
+            topics: [
+                { id: 'ch3_t1', name: '3.1 Basics of Digital Systems' },
+                { id: 'ch3_t2', name: '3.1.1 What is an Analog Signal' },
+                { id: 'ch3_t3', name: '3.1.2 Fundamentals of Digital Logic' },
+                { id: 'ch3_t4', name: '3.2 Boolean Algebra and Logic Gates' },
+                { id: 'ch3_t5', name: '3. 2.1 Boolean Functions and Expressions' },
+                { id: 'ch3_t6', name: '3.2.2 Logic Gates and their Functions' },
+                { id: 'ch3_t7', name: '3.3 Simplification of Boolean Functions' },
+                { id: 'ch3_t8', name: '3.4. Creating Logic Diagrams' },
+                { id: 'ch3_t9', name: '3.5. Application of Digital Logic' },
+                { id: 'ch3_t10', name: '3.5.1 Half-adder and Full-adder Circuits' },
+                { id: 'ch3_t11', name: '3.5.2 Karnaugh Map( K-Map)' }
+            ]
+        },
+        {
+            id: 'ch4',
+            name: 'UNIT 4: System Troubleshooting',
+            topics: [
+                { id: 'ch4_t1', name: '4.1 System Troubleshooting' },
+                { id: 'ch4_t2', name: '4.1.1 Systematic Process of Troubleshooting' },
+                { id: 'ch4_t3', name: '4.1.2 Importance of Troubleshooting in Computing Systems' },
+                { id: 'ch4_t4', name: '4.2 Troubleshooting Strategies' },
+                { id: 'ch4_t5', name: '4.2.1 Basic Software-Related Issues' },
+                { id: 'ch4_t6', name: '4.2.2 Basic Hardware-Related Issues' },
+                { id: 'ch4_t7', name: '4.2.3 Hardware Diagnosis and Maintenance' },
+                { id: 'ch4_t8', name: '4.2.4 Security and Maintenance' },
+                { id: 'ch4_t9', name: '4.2.5 Data Management and Backups' },
+                { id: 'ch4_t10', name: '4.2.6 Using Resources for Troubleshooting' },
+                { id: 'ch4_ex', name: 'Exercise' }
+            ]
+        },
+        {
+            id: 'ch5',
+            name: 'UNIT 5: Software System',
+            topics: [
+                { id: 'ch5_t1', name: '5.1 Software' },
+                { id: 'ch5_t2', name: '5.2 Introduction to System Software' },
+                { id: 'ch5_t3', name: '5.2.1 Operating System' },
+                { id: 'ch5_t4', name: '5.2.2 Utility Programs' },
+                { id: 'ch5_t5', name: '5.2.3 Device Drivers' },
+                { id: 'ch5_t6', name: '5.3 Application Software' },
+                { id: 'ch5_t7', name: '5.3.1 Commonly used application software' }
+            ]
+        },
+        {
+            id: 'ch6',
+            name: 'UNIT 6: Introduction to Computer Networks',
+            topics: [
+                { id: 'ch6_t1', name: '6.1 Network as a System' },
+                { id: 'ch6_t2', name: '6.2 Fundamental Concepts in Data Communication' },
+                { id: 'ch6_t3', name: '6.3 Networking Devices' },
+                { id: 'ch6_t4', name: '6.4 Network Topologies' },
+                { id: 'ch6_t5', name: '6.5 Transmission Modes' },
+                { id: 'ch6_t6', name: '6.6 The OSI Networking Model' },
+                { id: 'ch6_t7', name: '6.7 Ipv4 and Ipv6' },
+                { id: 'ch6_t8', name: '6.8 Protocols and Network Services' },
+                { id: 'ch6_t9', name: '6.9 Network Security' },
+                { id: 'ch6_t10', name: '6.10 Types of Networks' },
+                { id: 'ch6_t11', name: '6.11 Real-World Applications of Computer Networks' },
+                { id: 'ch6_t12', name: '6.12. Standard Protocols in TCP/IP Communications' },
+                { id: 'ch6_t13', name: '6.13 Network Security Methods' },
+                { id: 'ch6_t14', name: '6.14 Exercise Mcqs' }
+            ]
+        },
+        {
+            id: 'ch7',
+            name: 'UNIT 7: Computational Thinking',
+            topics: [
+                { id: 'ch7_t1', name: '7.0 Introduction' },
+                { id: 'ch7_t2', name: '7.1 Definition.of Computational Thinking' },
+                { id: 'ch7_t3', name: '7.2 Principles of Computational Thinking' },
+                { id: 'ch7_t4', name: '7.3 Algorithm Design Methods' },
+                { id: 'ch7_t5', name: '7.4 Algorithmic Activities' },
+                { id: 'ch7_t6', name: '7.5 Dry Run' },
+                { id: 'ch7_t7', name: '7.6 Introduction to LARP' },
+                { id: 'ch7_t8', name: '7.7 Error ldentification and Debugging' },
+                { id: 'ch7_t9', name: '7.8 Exercise Mcqs' }
+            ]
+        },
+        {
+            id: 'ch8',
+            name: 'UNIT 8: Web Development with HTML, CSS and JavaScript',
+            topics: [
+                { id: 'ch8_t1', name: '8.1 Web Development' },
+                { id: 'ch8_t2', name: '8.2 Basic Components of Web Development' },
+                { id: 'ch8_t3', name: '8.3 Getting Started with HTML' },
+                { id: 'ch8_t4', name: '8.4 HTML Basic Structure' },
+                { id: 'ch8_t5', name: '8.5 Creating Content with HTML' },
+                { id: 'ch8_t6', name: '8.6 Styling with CSS' },
+                { id: 'ch8_t7', name: '8.7 Introduction to JavaScript' },
+                { id: 'ch8_t8', name: '8.8 Developing and Debugging' },
+                { id: 'ch8_t9', name: '8.9 Exercise Mcqs' }
+            ]
+        },
+        {
+            id: 'ch9',
+            name: 'UNIT 9: Data Science and Data Gathering',
+            topics: [
+                { id: 'ch9_t1', name: '9.1 Data' },
+                { id: 'ch9_t2', name: '9.2 Data Types' },
+                { id: 'ch9_t3', name: '9.3 Organising and Analysing Data' },
+                { id: 'ch9_t4', name: '9.4 Data Types' },
+                { id: 'ch9_t5', name: '9.5 Data Storage Techniques' },
+                { id: 'ch9_t6', name: '9.6 Data Visualization' },
+                { id: 'ch9_t7', name: '9.7 Data Pre-Processing and Analysis' },
+                { id: 'ch9_t8', name: '9.8 Collaborative Tools and Cloud Storage' },
+                { id: 'ch9_t9', name: '9.9 Introduction to Data Science' },
+                { id: 'ch9_t10', name: '9.10 Big Data and its Applications' }
+            ]
+        },
+        {
+            id: 'ch10',
+            name: 'UNIT 10: Emerging Technologies in Computer Science',
+            topics: [
+                { id: 'ch10_t1', name: '10.1 Introduction to Artificial Intelligence (Al)' },
+                { id: 'ch10_t2', name: '10.2 Al Algorithms and Techniques' },
+                { id: 'ch10_t3', name: '10.3 Introduction to Internet of Things (loT)' },
+                { id: 'ch10_t4', name: '10.4 Implications and Future of Emerging Technologies' }
+            ]
+        },
+        {
+            id: 'ch11',
+            name: 'UNIT 11: Ethical, Social, and Legal Concerns in Computer Usage',
+            topics: [
+                { id: 'ch11_t1', name: '11.1 Responsible Computer Usage' },
+                { id: 'ch11_t2', name: '11.2 Safe and Secure Operation of Digital Platforms' },
+                { id: 'ch11_t3', name: '11.3 Best Practices in Online Behavior' },
+                { id: 'ch11_t4', name: '11.4 Legal and Ethical Frameworks' },
+                { id: 'ch11_t5', name: '11.5 Intellectual Property Rights' },
+                { id: 'ch11_t6', name: '11.6 Responsible Internet Use' },
+                { id: 'ch11_t7', name: '11.7 Impact of Computing on Society' }
+            ]
+        },
+        {
+            id: 'ch12',
+            name: 'UNIT 12: Entrepreneurship in Digital Age',
+            topics: [
+                { id: 'ch12_t1', name: '12.1 Entrepreneurship' },
+                { id: 'ch12_t2', name: '12.2 Entrepreneurship in the Digital Landscape' },
+                { id: 'ch12_t3', name: '12.3 Digital Tools and Platforms' },
+                { id: 'ch12_t4', name: '12.4 Business Idea Generation' },
+                { id: 'ch12_t5', name: '12.5 Developing Business Plans' },
+                { id: 'ch12_t6', name: '12.6 Ethical and Sustainable Entrepreneurship' },
+                { id: 'ch12_ex', name: 'Exercise' }
+            ]
+        }
+    ],
     '9_phy': [
         {
             id: 'ch1',
