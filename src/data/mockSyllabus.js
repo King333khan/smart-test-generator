@@ -58,6 +58,117 @@ export const SUBJECTS = {
 
 // Mock chapters based on typical PCTB syllabus
 export const CHAPTERS = {
+    '9_eng': [
+        {
+            id: 'ch1',
+            name: 'UNIT 1: The Saviour of Mankind',
+            topics: [
+                { id: 'ch1_t1', name: 'The Saviour of Mankind' }
+            ]
+        },
+        {
+            id: 'ch2',
+            name: 'UNIT 2: Patriotism',
+            topics: [
+                { id: 'ch2_t1', name: 'Patriotism' }
+            ]
+        },
+        {
+            id: 'ch3',
+            name: 'UNIT 3: Daffodils',
+            topics: [
+                { id: 'ch3_t1', name: 'Daffodils' }
+            ]
+        },
+        {
+            id: 'ch4',
+            name: 'UNIT 4: Hazrat Asma (رضي الله عنها)',
+            topics: [
+                { id: 'ch4_t1', name: 'Hazrat Asma (رضي الله عنها)' }
+            ]
+        },
+        {
+            id: 'ch5',
+            name: 'UNIT 5: Women Empowerment through Entrepreneurship',
+            topics: [
+                { id: 'ch5_t1', name: 'Women Empowerment through Entrepreneurship' }
+            ]
+        },
+        {
+            id: 'ch6',
+            name: 'UNIT 6: The Value of Time',
+            topics: [
+                { id: 'ch6_t1', name: 'The Value of Time' }
+            ]
+        },
+        {
+            id: 'ch7',
+            name: 'UNIT 7: If',
+            topics: [
+                { id: 'ch7_t1', name: 'If' }
+            ]
+        },
+        {
+            id: 'ch8',
+            name: 'UNIT 8: Globalisation\'s Impact on Culture and Economy',
+            topics: [
+                { id: 'ch8_t1', name: 'Globalisation\'s Impact on Culture and Economy' }
+            ]
+        },
+        {
+            id: 'ch9',
+            name: 'UNIT 9: Quality Education A Key to Success',
+            topics: [
+                { id: 'ch9_t1', name: 'Quality Education A Key to Success' }
+            ]
+        },
+        {
+            id: 'ch10',
+            name: 'UNIT 10: The Silent Predator and the Majestic Prey-Snow Leopard and Markhor',
+            topics: [
+                { id: 'ch10_t1', name: 'Wildlife Vignettes Fascinating Nature' }
+            ]
+        },
+        {
+            id: 'ch11',
+            name: 'UNIT 11: The Dear Departed (One-Act Play) Stanley Houghton',
+            topics: [
+                { id: 'ch11_t1', name: 'The Dear Departed (One-Act Play) Stanley Houghton' }
+            ]
+        },
+        {
+            id: 'ch12',
+            name: 'English B',
+            topics: [
+                { id: 'ch12_t1', name: '1 Letters' },
+                { id: 'ch12_t2', name: '2 Stories' },
+                { id: 'ch12_t3', name: '3 Dialogues' },
+                { id: 'ch12_t4', name: '4 Comprehension Paragraphs' },
+                { id: 'ch12_t5', name: '5 Idioms' }
+            ]
+        },
+        {
+            id: 'ch13',
+            name: 'TENSES',
+            topics: [
+                { id: 'ch13_t1', name: '1 Use of \'is\', \'am\', \'are\' and \'was\', were' },
+                { id: 'ch13_t2', name: '2 Use of \'has\' and \'have\'' },
+                { id: 'ch13_t3', name: '3 Use of \'had\'' },
+                { id: 'ch13_t4', name: '4 Present Indefinite Tense' },
+                { id: 'ch13_t5', name: '5 Present Continuous Tense' },
+                { id: 'ch13_t6', name: '6 Present Perfect Tense' },
+                { id: 'ch13_t7', name: '7 Present Perfect Continuous Tense' },
+                { id: 'ch13_t8', name: '8 Past Indefinite Tense' },
+                { id: 'ch13_t9', name: '9 Past Continuous Tense' },
+                { id: 'ch13_t10', name: '10 Past Perfect Tense' },
+                { id: 'ch13_t11', name: '11 Past Perfect Continuous Tense' },
+                { id: 'ch13_t12', name: '12 Future Indefinite Tense' },
+                { id: 'ch13_t13', name: '13 Future Continuous Tense' },
+                { id: 'ch13_t14', name: '14 Future Perfect Tense' },
+                { id: 'ch13_t15', name: '15 Future Perfect Continuous Tense' }
+            ]
+        }
+    ],
     '9_cs': [
         {
             id: 'ch1',
