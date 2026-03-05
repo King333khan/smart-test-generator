@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronRight, Check, FileDown, Printer, Edit2, Save, ChevronDown, ChevronUp } from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
+import { generateMockQuestion } from '../utils/questionGenerator';
 import './CreateTest.css';
 
 const StepIndicator = ({ currentStep }) => {
@@ -446,20 +447,23 @@ const CreateTest = () => {
                                         </div>
 
                                         <div className="mcq-list">
-                                            {Array.from({ length: testData.config.mcqs }).map((_, i) => (
-                                                <div key={i} className="dual-mcq-item">
-                                                    <div className="mcq-question-row">
-                                                        <div className="mcq-en">{i + 1}. This is a mocked multiple choice question from the selected chapters?</div>
-                                                        <div className="mcq-ur">یہ منتخب کردہ ابواب میں سے ایک فرضی کثیر الانتخابی سوال ہے؟ .{i + 1}</div>
+                                            {Array.from({ length: testData.config.mcqs }).map((_, i) => {
+                                                const q = generateMockQuestion('mcq', testData.cls, testData.subject, testData.chapters, i);
+                                                return (
+                                                    <div key={i} className="dual-mcq-item">
+                                                        <div className="mcq-question-row">
+                                                            <div className="mcq-en">{i + 1}. {q.en}</div>
+                                                            <div className="mcq-ur">{q.ur} .{i + 1}</div>
+                                                        </div>
+                                                        <div className="mcq-options-row">
+                                                            <div>(A) Option 1</div>
+                                                            <div>(B) Option 2</div>
+                                                            <div>(C) Option 3</div>
+                                                            <div>(D) Option 4</div>
+                                                        </div>
                                                     </div>
-                                                    <div className="mcq-options-row">
-                                                        <div>(A) Option 1</div>
-                                                        <div>(B) Option 2</div>
-                                                        <div>(C) Option 3</div>
-                                                        <div>(D) Option 4</div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                )
+                                            })}
                                             {testData.customQs.filter(q => q.type === 'mcq').map((q, i) => (
                                                 <div key={q.id} className="dual-mcq-item">
                                                     <div className="mcq-question-row">
@@ -496,12 +500,15 @@ const CreateTest = () => {
                                                 </div>
 
                                                 <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                                    {Array.from({ length: testData.config.shortQs }).map((_, i) => (
-                                                        <div key={i} className="dual-subjective-q">
-                                                            <div className="en">({i + 1}) Define and explain the concept related to selected topic {i + 1}.</div>
-                                                            <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>منتخب کردہ عنوان {i + 1} سے متعلق تصور کی تعریف اور وضاحت کریں۔ ({i + 1})</div>
-                                                        </div>
-                                                    ))}
+                                                    {Array.from({ length: testData.config.shortQs }).map((_, i) => {
+                                                        const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i);
+                                                        return (
+                                                            <div key={i} className="dual-subjective-q">
+                                                                <div className="en">({i + 1}) {q.en}</div>
+                                                                <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
+                                                            </div>
+                                                        )
+                                                    })}
                                                     {testData.customQs.filter(q => q.type === 'short').map((q, i) => (
                                                         <div key={q.id} className="dual-subjective-q">
                                                             <div className="en">({testData.config.shortQs + i + 1}) {q.en || "Custom Short Question"}</div>
@@ -520,22 +527,26 @@ const CreateTest = () => {
                                                 </div>
 
                                                 <div style={{ marginTop: '1.5rem' }}>
-                                                    {Array.from({ length: testData.config.longQs }).map((_, i) => (
-                                                        <div key={i} style={{ marginBottom: '1.5rem' }}>
-                                                            <div className="dual-subjective-q">
-                                                                <strong className="en" style={{ minWidth: '40px' }}>Q{i + 3}:</strong>
-                                                                <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
+                                                    {Array.from({ length: testData.config.longQs }).map((_, i) => {
+                                                        const qA = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2);
+                                                        const qB = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2 + 1);
+                                                        return (
+                                                            <div key={i} style={{ marginBottom: '1.5rem' }}>
+                                                                <div className="dual-subjective-q">
+                                                                    <strong className="en" style={{ minWidth: '40px' }}>Q{i + 3}:</strong>
+                                                                    <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
+                                                                </div>
+                                                                <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
+                                                                    <div className="en">(a) {qA.en}</div>
+                                                                    <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
+                                                                </div>
+                                                                <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
+                                                                    <div className="en">(b) {qB.en}</div>
+                                                                    <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
+                                                                </div>
                                                             </div>
-                                                            <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-                                                                <div className="en">(a) Describe in detail the phenomenon of the core topic.</div>
-                                                                <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>بنیادی عنوان کے رجحان کو تفصیل سے بیان کریں۔ (a)</div>
-                                                            </div>
-                                                            <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
-                                                                <div className="en">(b) Solve the related numerical or write the application.</div>
-                                                                <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>متعلقہ عددی حل کریں یا درخواست لکھیں۔ (b)</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                                        )
+                                                    })}
                                                     {testData.customQs.filter(q => q.type === 'long').map((q, i) => (
                                                         <div key={q.id} style={{ marginBottom: '1.5rem' }}>
                                                             <div className="dual-subjective-q">

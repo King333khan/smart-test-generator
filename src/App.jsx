@@ -6,6 +6,7 @@ import SavedTests from './pages/SavedTests';
 import PastPapers from './pages/PastPapers';
 import ViewTest from './pages/ViewTest';
 import Settings from './pages/Settings';
+import ManageQuestions from './pages/ManageQuestions';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/create" element={<CreateTest />} />
             <Route path="/saved" element={<SavedTests />} />
             <Route path="/past-papers" element={<PastPapers />} />
+            <Route path="/manage-questions" element={<ManageQuestions />} />
             <Route path="/test/:id" element={<ViewTest />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

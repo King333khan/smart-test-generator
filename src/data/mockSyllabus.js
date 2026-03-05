@@ -144,7 +144,8 @@ export const CHAPTERS = {
                 { id: 'ch12_t2', name: '2 Stories' },
                 { id: 'ch12_t3', name: '3 Dialogues' },
                 { id: 'ch12_t4', name: '4 Comprehension Paragraphs' },
-                { id: 'ch12_t5', name: '5 Idioms' }
+                { id: 'ch12_t5', name: '5 Idioms' },
+                { id: 'ch12_t6', name: '6 Essays' }
             ]
         },
         {

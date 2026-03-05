@@ -55,6 +55,11 @@ const Sidebar = () => {
           <span>Past Papers</span>
         </NavLink>
 
+        <NavLink to="/manage-questions" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <Library size={20} />
+          <span>Question Bank</span>
+        </NavLink>
+
         <div className="nav-divider"></div>
 
         <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
