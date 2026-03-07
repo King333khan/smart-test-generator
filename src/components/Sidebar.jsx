@@ -69,7 +69,10 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-        <p className="text-muted text-sm">v1.0.0</p>
+        <div>
+          <p className="text-muted text-sm" style={{ margin: 0 }}>v1.0.0</p>
+          <p className="text-muted" style={{ margin: 0, fontSize: '0.7rem', marginTop: '2px' }}>Designed by Muhammad Akmal Bashir</p>
+        </div>
         <button
           onClick={toggleTheme}
           className="btn btn-secondary"

@@ -577,6 +577,9 @@ const CreateTest = () => {
                                     </div>
                                 )}
                             </div>
+                            <div className="paper-footer" style={{ marginTop: '30px', textAlign: 'center', fontSize: '12px', color: '#555', borderTop: '1px dashed #ccc', paddingTop: '10px' }}>
+                                Designed by Muhammad Akmal Bashir
+                            </div>
                         </div>
                     </div>
                 )}
