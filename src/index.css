@@ -1,18 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gulzar&family=Noto+Nastaliq+Urdu:wght@400..700&display=swap');
 
 @font-face {
-    font-family: 'Jameel Noori Nastaliq';
+    font-family: 'Jameel Noori Nastaleeq';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazirmatn-Regular.woff2') format('woff2'); 
+    /* The above is a fallback, actual JNN below */
     src: local('Jameel Noori Nastaliq'), local('Jameel Noori Nastaleeq'),
-         url('https://cdn.jsdelivr.net/gh/haideralishabir/jameel-noori-nastaleeq-font/JameelNooriNastaleeq.ttf') format('truetype');
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff2') format('woff2'),
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff') format('woff'),
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Jameel Noori Nastaleeq';
+    font-family: 'Jameel Noori Nastaliq';
     src: local('Jameel Noori Nastaliq'), local('Jameel Noori Nastaleeq'),
-         url('https://cdn.jsdelivr.net/gh/haideralishabir/jameel-noori-nastaleeq-font/JameelNooriNastaleeq.ttf') format('truetype');
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff2') format('woff2'),
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff') format('woff'),
+         url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
