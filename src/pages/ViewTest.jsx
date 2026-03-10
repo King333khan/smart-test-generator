@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download, Files } from 'lucide-react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
 import './CreateTest.css';
@@ -18,7 +18,8 @@ const ViewTest = () => {
         showHeader: true,
         showDividers: false,
         headerStyle: 'default', // 'default', 'centered', 'compact'
-        isEditing: false
+        isEditing: false,
+        pageBreak: false
     });
 
     useEffect(() => {
@@ -158,6 +159,9 @@ const ViewTest = () => {
                         </button>
                         <button className="btn btn-secondary" onClick={exportToWord} style={{ color: '#2563eb', borderColor: '#bfdbfe' }}>
                             <Download size={16} /> Download Word
+                        </button>
+                        <button className="btn btn-secondary" onClick={() => toggleSetting('pageBreak')} style={{ background: settings.pageBreak ? 'var(--primary-color)' : '', color: settings.pageBreak ? 'white' : '', borderColor: settings.pageBreak ? 'var(--primary-color)' : '' }}>
+                            <Files size={16} /> {settings.pageBreak ? 'Separate Pages' : 'Continuous'}
                         </button>
                         <button className="btn" onClick={() => window.print()}>
                             <Printer size={16} /> Print Test
@@ -316,7 +320,7 @@ const ViewTest = () => {
                         )}
 
                         {/* Subjective Part */}
-                        <div style={{ pageBreakBefore: 'always', marginTop: '20px' }}></div>
+                        <div style={{ pageBreakBefore: settings.pageBreak ? 'always' : 'auto', marginTop: '20px' }}></div>
 
                         {(testData.config.shortQs > 0 || testData.config.longQs > 0) && (
                             <div className="question-section">
