@@ -1,3 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap');
+
+@font-face {
+    font-family: 'Jameel Noori Nastaliq';
+    src: local('Jameel Noori Nastaliq'), local('Jameel Noori Nastaleeq'),
+         url('https://cdn.jsdelivr.net/gh/haideralishabir/jameel-noori-nastaleeq-font/JameelNooriNastaleeq.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq';
+    src: local('Jameel Noori Nastaliq'), local('Jameel Noori Nastaleeq'),
+         url('https://cdn.jsdelivr.net/gh/haideralishabir/jameel-noori-nastaleeq-font/JameelNooriNastaleeq.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
   --primary-color: #4f46e5;
   --primary-hover: #4338ca;

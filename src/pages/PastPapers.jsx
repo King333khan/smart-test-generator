@@ -24,6 +24,22 @@ const PastPapers = () => {
         });
     };
 
+    const handleDownload = (paper) => {
+        // Create a mock text content representing the past paper
+        const content = `SMART TEST GENERATOR\n====================\n\nTitle: ${paper.title}\nClass: ${paper.classId}\nSubject: ${paper.subjectId}\nYear: ${paper.year}\nBoard: ${paper.board}\nType: ${paper.type}\n\n[This is a simulated downloaded paper from the Smart Test Generator.]`;
+        
+        // Create a blob and trigger download
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${paper.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     const filteredPapers = PAST_PAPERS.filter(paper => {
         const matchesClass = !filters.cls || paper.classId === filters.cls;
         const matchesSubject = !filters.subject || paper.subjectId === filters.subject;
@@ -143,9 +159,9 @@ const PastPapers = () => {
                                     <ExternalLink size={18} />
                                     View
                                 </button>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" onClick={() => handleDownload(paper)}>
                                     <FileDown size={18} />
-                                    Download PDF
+                                    Download Paper
                                 </button>
                             </div>
                         </div>
