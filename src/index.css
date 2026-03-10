@@ -2,8 +2,6 @@
 
 @font-face {
     font-family: 'Jameel Noori Nastaleeq';
-    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazirmatn-Regular.woff2') format('woff2'); 
-    /* The above is a fallback, actual JNN below */
     src: local('Jameel Noori Nastaliq'), local('Jameel Noori Nastaleeq'),
          url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff2') format('woff2'),
          url('https://cdn.fontcdn.ir/Font/Persian/Jameel_Noori_Nastaleeq/Jameel_Noori_Nastaleeq_Regular.woff') format('woff'),
