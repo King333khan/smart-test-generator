@@ -44,26 +44,16 @@ body {
 /* Dashboard Layout */
 .dashboard-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-.sidebar {
-  width: var(--sidebar-width);
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid var(--border-color);
-}
-
 .main-content {
-  margin-left: var(--sidebar-width);
   flex: 1;
   padding: 2rem;
-  width: calc(100% - var(--sidebar-width));
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   transition: all 0.3s ease;
 }
 
@@ -73,19 +63,7 @@ body {
     flex-direction: column;
   }
 
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem;
-    z-index: 10;
-  }
-
   .main-content {
-    margin-left: 0;
-    width: 100%;
     padding: 1rem;
   }
 }
@@ -126,7 +104,7 @@ body {
     min-height: auto;
   }
 
-  .sidebar,
+  .navbar,
   .topbar,
   .no-print {
     display: none !important;
