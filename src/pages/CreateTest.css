@@ -23,7 +23,7 @@
 
 /* Urdu Text Support */
 .urdu-text {
-    font-family: 'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Urdu Typesetting', Arial, sans-serif !important;
+    font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Nafees Web Naskh', Arial, sans-serif !important;
     font-size: 1.2rem;
     line-height: 1.8;
 }
@@ -363,7 +363,7 @@
 
 .dual-lang-header .ur {
     text-align: right;
-    font-family: 'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif;
+    font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Nafees Web Naskh', Arial, sans-serif !important;
     font-size: 1.25rem;
 }
 
@@ -388,7 +388,7 @@
 .mcq-ur {
     text-align: right;
     flex: 1;
-    font-family: 'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif;
+    font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Nafees Web Naskh', Arial, sans-serif !important;
     font-size: 1.25rem;
     direction: rtl;
 }

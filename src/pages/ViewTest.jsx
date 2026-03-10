@@ -84,11 +84,11 @@ const ViewTest = () => {
                 .paper-meta { display: flex; justify-content: space-between; margin-bottom: 20px; }
                 .dual-lang-header { margin-top: 15px; margin-bottom: 10px; font-weight: bold; }
                 .en { text-align: left; direction: ltr; }
-                .ur { text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif; font-size: 14pt; }
+                .ur { text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif !important; font-size: 14pt; }
                 .mcq-question-row, .dual-subjective-q { display: flex; justify-content: space-between; margin-bottom: 5px; }
                 .mcq-options-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
                 .mcq-en { flex: 1; text-align: left; }
-                .mcq-ur { flex: 1; text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif;}
+                .mcq-ur { flex: 1; text-align: right; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif !important; }
                 hr { border: 0; border-bottom: 1px dashed #ccc; margin: 15px 0; }
                 @page { size: A4; margin: 1in; }
             </style>
@@ -281,7 +281,7 @@ const ViewTest = () => {
                                                         <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                             <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
                                                             {q.urOptions?.[optIndex] && (
-                                                                <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
                                                                     {q.urOptions[optIndex]}
                                                                 </span>
                                                             )}
@@ -302,7 +302,7 @@ const ViewTest = () => {
                                                     <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                         <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
                                                         {q.urOptions?.[optIndex] && (
-                                                            <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                            <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
                                                                 {q.urOptions[optIndex]}
                                                             </span>
                                                         )}
@@ -338,14 +338,14 @@ const ViewTest = () => {
                                                 return (
                                                     <div key={i} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
                                                         <div className="en">({i + 1}) {q.en}</div>
-                                                        <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
+                                                        <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
                                                     </div>
                                                 )
                                             })}
                                             {testData.customQs?.filter(q => q.type === 'short').map((q, i) => (
                                                 <div key={q.id} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
                                                     <div className="en">({testData.config.shortQs + i + 1}) {q.en || "Custom Short Question"}</div>
-                                                    <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
+                                                    <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -367,15 +367,15 @@ const ViewTest = () => {
                                                     <div key={i} style={{ marginBottom: '1.5rem', borderBottom: settings.showDividers ? '1px solid #ccc' : 'none', paddingBottom: settings.showDividers ? '1.5rem' : '0' }}>
                                                         <div className="dual-subjective-q">
                                                             <strong className="en" style={{ minWidth: '40px' }}>Q{i + 3}:</strong>
-                                                            <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
+                                                            <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                             <div className="en">(a) {qA.en}</div>
-                                                            <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
+                                                            <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
                                                             <div className="en">(b) {qB.en}</div>
-                                                            <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
+                                                            <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
                                                         </div>
                                                     </div>
                                                 )
@@ -384,11 +384,11 @@ const ViewTest = () => {
                                                 <div key={q.id} style={{ marginBottom: '1.5rem', borderBottom: settings.showDividers ? '1px solid #ccc' : 'none', paddingBottom: settings.showDividers ? '1.5rem' : '0' }}>
                                                     <div className="dual-subjective-q">
                                                         <strong className="en" style={{ minWidth: '40px' }}>Q{testData.config.longQs + i + 3}:</strong>
-                                                        <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
+                                                        <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
                                                     </div>
                                                     <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                         <div className="en">{q.en || "Custom Long Question"}</div>
-                                                        <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
+                                                        <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
                                                     </div>
                                                 </div>
                                             ))}
