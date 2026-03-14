@@ -1,0 +1,357 @@
+/* ========== TEST SCHEDULE PAGE ========== */
+.ts-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Header */
+.ts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.ts-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(135deg, var(--text-dark), var(--primary-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* -------- Stats -------- */
+.ts-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.ts-stat-card {
+    padding: 1.2rem 1.5rem;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.ts-stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+}
+
+.upcoming-icon  { color: #f59e0b; background: rgba(245,158,11,.12); }
+.ongoing-icon   { color: #3b82f6; background: rgba(59,130,246,.12); }
+.completed-icon { color: #10b981; background: rgba(16,185,129,.12); }
+.total-icon     { color: var(--primary-color); background: rgba(79,70,229,.12); }
+
+.stat-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+/* -------- Form Card -------- */
+.ts-form-card {
+    padding: 2rem;
+    border-radius: 1.5rem;
+}
+
+.ts-form-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+}
+
+.ts-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ts-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+.ts-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ts-form-group--wide {
+    grid-column: span 2;
+}
+
+.ts-form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.ts-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* -------- Filter Tabs -------- */
+.ts-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.ts-tab {
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.ts-tab:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.ts-tab.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* -------- Schedule Grid -------- */
+.ts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+/* -------- Schedule Card -------- */
+.ts-card {
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.ts-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border-color: rgba(79, 70, 229, 0.15);
+}
+
+.ts-card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ts-card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.ts-card-title-row h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.4;
+    flex: 1;
+}
+
+/* Status badges */
+.ts-badge {
+    flex-shrink: 0;
+    padding: 0.2rem 0.7rem;
+    border-radius: 2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.status-upcoming  { background: rgba(245,158,11,.15); color: #d97706; }
+.status-ongoing   { background: rgba(59,130,246,.15);  color: #2563eb; }
+.status-completed { background: rgba(16,185,129,.15);  color: #059669; }
+.status-cancelled { background: rgba(239,68,68,.12);   color: #dc2626; }
+
+.ts-card-subject {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    opacity: 0.85;
+}
+
+.ts-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ts-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.ts-meta-item .lucide {
+    color: var(--primary-color);
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+.ts-card-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+    background: rgba(79, 70, 229, 0.04);
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.75rem;
+}
+
+.ts-card-note .lucide {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--primary-color);
+    opacity: 0.6;
+}
+
+/* -------- Card Actions -------- */
+.ts-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.45rem 0.9rem !important;
+    font-size: 0.82rem !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-danger:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.ts-confirm-delete {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ef4444;
+}
+
+/* Dark mode */
+.dark-mode .ts-card-note {
+    background: rgba(79, 70, 229, 0.08);
+}
+
+.dark-mode .ts-tab {
+    color: rgba(255,255,255,0.5);
+    border-color: rgba(255,255,255,0.1);
+}
+
+.dark-mode .ts-tab:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 768px) {
+    .ts-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ts-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .ts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ts-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ts-form-group--wide {
+        grid-column: span 1;
+    }
+
+    .ts-form-actions {
+        flex-direction: column;
+    }
+
+    .ts-card-actions {
+        flex-direction: column;
+    }
+}
