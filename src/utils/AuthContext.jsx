@@ -30,27 +30,37 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        // Check for existing session
         const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            const currentUser = session?.user ?? null;
-            setUser(currentUser);
-            if (currentUser) await fetchProfile(currentUser.id);
-            setLoading(false);
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUser = session?.user ?? null;
+                setUser(currentUser);
+                if (currentUser) {
+                    await fetchProfile(currentUser.id);
+                }
+            } catch (err) {
+                console.error('Session error:', err);
+            } finally {
+                setLoading(false);
+            }
         };
 
         getSession();
 
-        // Listen for changes (login, logout, etc.)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            const currentUser = session?.user ?? null;
-            setUser(currentUser);
-            if (currentUser) {
-                await fetchProfile(currentUser.id);
-            } else {
-                setProfile(null);
+            try {
+                const currentUser = session?.user ?? null;
+                setUser(currentUser);
+                if (currentUser) {
+                    await fetchProfile(currentUser.id);
+                } else {
+                    setProfile(null);
+                }
+            } catch (err) {
+                console.error('Auth change error:', err);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         });
 
         return () => subscription.unsubscribe();
