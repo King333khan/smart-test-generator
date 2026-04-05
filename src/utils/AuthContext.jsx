@@ -30,6 +30,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        // SAFETY TIMEOUT: Force-stop loading after 5 seconds to prevent blank screen
+        const timeout = setTimeout(() => {
+            setLoading(false);
+            console.warn('Auth timeout: Forcing app to render.');
+        }, 5000);
+
         const getSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -40,7 +46,9 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (err) {
                 console.error('Session error:', err);
+                // Even on error, we proceed to hide blank screen
             } finally {
+                clearTimeout(timeout);
                 setLoading(false);
             }
         };
@@ -63,7 +71,10 @@ export const AuthProvider = ({ children }) => {
             }
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            clearTimeout(timeout);
+            subscription.unsubscribe();
+        };
     }, []);
 
     const value = {
