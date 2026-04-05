@@ -14,7 +14,14 @@ const Dashboard = () => {
     });
 
     useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem('savedTests') || '[]');
+        let saved = [];
+        try {
+            saved = JSON.parse(localStorage.getItem('savedTests') || '[]');
+            if (!Array.isArray(saved)) saved = [];
+        } catch (e) {
+            console.error('Error parsing saved tests:', e);
+            saved = [];
+        }
 
         const now = new Date();
         const todayStr = now.toDateString();
