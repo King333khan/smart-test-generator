@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { ChevronRight, Check, FileDown, Printer, Edit2, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Check, FileDown, Printer, Edit2, Save, ChevronDown, ChevronUp, School, MapPin, Phone } from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
+import { useAuth } from '../utils/AuthContext';
+import { supabase } from '../utils/supabaseClient';
 import './CreateTest.css';
 
 const StepIndicator = ({ currentStep }) => {
@@ -27,23 +29,71 @@ const StepIndicator = ({ currentStep }) => {
 };
 
 const CreateTest = () => {
+    const { user } = useAuth();
     const [step, setStep] = useState(1);
-    const [testData, setTestData] = useState(() => {
-        const savedSettings = JSON.parse(localStorage.getItem('appSettings')) || {};
-        return {
-            cls: '',
-            subject: '',
-            chapters: [],
-            config: { mcqs: 10, mcqMarks: 1, shortQs: 5, shortQsAttempt: 5, shortQMarks: 2, longQs: 2, longQsAttempt: 2, longQMarks: 5, totalMarks: 50 },
-            customQs: [],
-            instituteName: savedSettings.defaultInstitute || 'My School',
-            testTitle: savedSettings.defaultTestTitle || 'Monthly Assessment - 2026',
-            address: savedSettings.address || '',
-            mobile: savedSettings.mobile || ''
-        };
+    const [loadingProfile, setLoadingProfile] = useState(true);
+    const [testData, setTestData] = useState({
+        cls: '',
+        subject: '',
+        chapters: [],
+        config: { mcqs: 10, mcqMarks: 1, shortQs: 5, shortQsAttempt: 5, shortQMarks: 2, longQs: 2, longQsAttempt: 2, longQMarks: 5, totalMarks: 50 },
+        customQs: [],
+        instituteName: 'My School',
+        testTitle: 'Monthly Assessment - 2026',
+        address: '',
+        mobile: ''
     });
 
     const [isSaved, setIsSaved] = useState(false);
+
+    // Fetch profile data from Supabase
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!user) {
+                setLoadingProfile(false);
+                return;
+            }
+            
+            // Priority 1: Check database "profiles" table
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (data && data.institute_name) {
+                    setTestData(prev => ({
+                        ...prev,
+                        instituteName: data.institute_name,
+                        address: data.address || prev.address,
+                        mobile: data.mobile || prev.mobile
+                    }));
+                } 
+                // Priority 2: Fallback to Auth Metadata (Signup information)
+                else if (user.user_metadata?.institute_name) {
+                    setTestData(prev => ({
+                        ...prev,
+                        instituteName: user.user_metadata.institute_name
+                    }));
+                }
+            } catch (err) {
+                console.error('Error fetching profile:', err);
+                // Fallback to Auth Metadata on error too
+                if (user.user_metadata?.institute_name) {
+                    setTestData(prev => ({
+                        ...prev,
+                        instituteName: user.user_metadata.institute_name
+                    }));
+                }
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+
+        fetchProfile();
+    }, [user]);
+
     const [expandedChapters, setExpandedChapters] = useState([]); // State for expanded chapter IDs
 
     const toggleChapterExpansion = (chapterId) => {
@@ -241,44 +291,41 @@ const CreateTest = () => {
                         <p className="text-muted" style={{ marginBottom: '1.5rem' }}>Set up the structure and branding of the exam.</p>
 
                         <div className="config-form">
-                            <div className="form-group">
-                                <label>Institute Name (Header)</label>
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    value={testData.instituteName}
-                                    onChange={e => updateData('instituteName', e.target.value)}
-                                />
+                            {/* Simplified Header for SaaS */}
+                            <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2rem', border: '1px solid var(--primary-light)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                    <h3 style={{ fontSize: '1rem', margin: 0, color: 'var(--primary-color)' }}>Institute Details</h3>
+                                    <span className="badge" style={{ fontSize: '0.7rem', background: 'var(--primary-light)', color: 'var(--primary-color)' }}>AUTO-FILLED FROM PROFILE</span>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                                    <div className="form-group">
+                                        <label style={{ fontSize: '0.8rem' }}>Institute Name</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <School size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                                            <input type="text" className="form-input" style={{ paddingLeft: '2.5rem', fontSize: '0.9rem' }} value={testData.instituteName} onChange={e => updateData('instituteName', e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label style={{ fontSize: '0.8rem' }}>Test Title</label>
+                                        <input type="text" className="form-input" style={{ fontSize: '0.9rem' }} value={testData.testTitle} onChange={e => updateData('testTitle', e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label style={{ fontSize: '0.8rem' }}>Address</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <MapPin size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                                            <input type="text" className="form-input" style={{ paddingLeft: '2.5rem', fontSize: '0.9rem' }} value={testData.address} onChange={e => updateData('address', e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label style={{ fontSize: '0.8rem' }}>Contact</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <Phone size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                                            <input type="text" className="form-input" style={{ paddingLeft: '2.5rem', fontSize: '0.9rem' }} value={testData.mobile} onChange={e => updateData('mobile', e.target.value)} />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label>Institute Address</label>
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    value={testData.address}
-                                    onChange={e => updateData('address', e.target.value)}
-                                    placeholder="Optional"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Contact Number</label>
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    value={testData.mobile}
-                                    onChange={e => updateData('mobile', e.target.value)}
-                                    placeholder="Optional"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Test Title / Description</label>
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    value={testData.testTitle}
-                                    onChange={e => updateData('testTitle', e.target.value)}
-                                />
-                            </div>
+
                             <div className="form-group">
                                 <label>Total Marks</label>
                                 <input
