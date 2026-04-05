@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
-import { FileText, Calendar, Activity } from 'lucide-react';
+import { FileText, Calendar, Activity, Tag } from 'lucide-react';
 
 const Dashboard = () => {
     const [stats, setStats] = useState({
