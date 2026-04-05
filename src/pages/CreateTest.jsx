@@ -1,5 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Check, FileDown, Printer, Edit2, Save, ChevronDown, ChevronUp, School, MapPin, Phone } from 'lucide-react';
+import { 
+    ChevronRight, 
+    ChevronLeft, 
+    Check, 
+    FileDown, 
+    Printer, 
+    Edit2, 
+    Save, 
+    ChevronDown, 
+    ChevronUp, 
+    School, 
+    MapPin, 
+    Phone, 
+    FileText, 
+    AlertCircle, 
+    CheckCircle, 
+    Download, 
+    Trash2, 
+    Plus 
+} from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
 import { useAuth } from '../utils/AuthContext';
