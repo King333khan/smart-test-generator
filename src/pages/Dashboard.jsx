@@ -9,6 +9,7 @@ const Dashboard = () => {
         testsToday: 0,
         totalTests: 0,
         popularSubject: 'N/A',
+        classDistribution: [],
         recentActivity: []
     });
 
