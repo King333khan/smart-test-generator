@@ -1,11 +1,11 @@
 /* ========== TEST SCHEDULE PAGE ========== */
 .ts-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 3rem;
 }
 
 /* Header */
@@ -14,166 +14,155 @@
     justify-content: space-between;
     align-items: flex-end;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .ts-header h1 {
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     font-weight: 800;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.03em;
     background: linear-gradient(135deg, var(--text-dark), var(--primary-color));
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 /* -------- Stats -------- */
 .ts-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
 }
 
 .ts-stat-card {
-    padding: 1.2rem 1.5rem;
-    border-radius: 1.25rem;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    transition: transform 0.2s ease;
-}
-
-.ts-stat-card:hover {
-    transform: translateY(-3px);
+    gap: 1.5rem;
 }
 
 .stat-icon {
-    padding: 0.6rem;
-    border-radius: 0.75rem;
+    padding: 0.8rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.upcoming-icon  { color: #f59e0b; background: rgba(245,158,11,.12); }
-.ongoing-icon   { color: #3b82f6; background: rgba(59,130,246,.12); }
-.completed-icon { color: #10b981; background: rgba(16,185,129,.12); }
-.total-icon     { color: var(--primary-color); background: rgba(79,70,229,.12); }
+.upcoming-icon  { color: #f59e0b; background: rgba(245,158,11,.1); }
+.ongoing-icon   { color: #3b82f6; background: rgba(59,130,246,.1); }
+.completed-icon { color: #10b981; background: rgba(16,185,129,.1); }
+.total-icon     { color: var(--primary-color); background: var(--primary-light); }
 
 .stat-number {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--text-dark);
     line-height: 1;
 }
 
 .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    font-weight: 600;
-    margin-top: 0.25rem;
+    font-weight: 700;
+    margin-top: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* -------- Form Card -------- */
 .ts-form-card {
-    padding: 2rem;
-    border-radius: 1.5rem;
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--primary-color);
+    background: var(--card-bg);
 }
 
 .ts-form-title {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
 }
 
 .ts-form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.75rem;
 }
 
-.ts-form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.25rem;
+.form-select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
-.ts-form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.ts-form-group--wide {
-    grid-column: span 2;
-}
-
-.ts-form-group label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-dark);
-}
-
-.ts-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--border-color);
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
 /* -------- Filter Tabs -------- */
 .ts-filter-tabs {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    background: var(--primary-light);
+    padding: 0.5rem;
+    border-radius: var(--radius-lg);
+    width: fit-content;
 }
 
 .ts-tab {
-    padding: 0.5rem 1.2rem;
-    border-radius: 2rem;
-    border: 1px solid var(--border-color);
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius-md);
+    border: none;
     background: transparent;
     color: var(--text-muted);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
+    transition: all 0.3s;
 }
 
 .ts-tab:hover {
-    border-color: var(--primary-color);
     color: var(--primary-color);
 }
 
 .ts-tab.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    background: white;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-md);
 }
 
 /* -------- Schedule Grid -------- */
 .ts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
 }
 
 /* -------- Schedule Card -------- */
 .ts-card {
-    padding: 1.5rem;
-    border-radius: 1.25rem;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
+    gap: 1.5rem;
+    border: 1px solid var(--border-color);
 }
 
 .ts-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-    border-color: rgba(79, 70, 229, 0.15);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
 }
 
 .ts-card-top {
@@ -190,22 +179,18 @@
 }
 
 .ts-card-title-row h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    line-height: 1.4;
-    flex: 1;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
 }
 
 /* Status badges */
 .ts-badge {
-    flex-shrink: 0;
-    padding: 0.2rem 0.7rem;
-    border-radius: 2rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    white-space: nowrap;
+    padding: 0.35rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
 }
 
 .status-upcoming  { background: rgba(245,158,11,.15); color: #d97706; }
@@ -224,332 +209,69 @@
 }
 
 .ts-card-meta {
+    padding-top: 1rem;
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    gap: 0.75rem;
 }
 
 .ts-meta-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-muted);
-}
-
-.ts-meta-item .lucide {
-    color: var(--primary-color);
-    opacity: 0.7;
-    flex-shrink: 0;
 }
 
 .ts-card-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-style: italic;
-    background: rgba(79, 70, 229, 0.04);
-    padding: 0.6rem 0.75rem;
-    border-radius: 0.75rem;
+    background: var(--primary-light);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--text-dark);
 }
 
-.ts-card-note .lucide {
-    flex-shrink: 0;
-    margin-top: 2px;
-    color: var(--primary-color);
-    opacity: 0.6;
-}
-
-/* -------- Card Actions -------- */
-.ts-card-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: auto;
-    flex-wrap: wrap;
-}
-
-.btn-sm {
-    padding: 0.45rem 0.9rem !important;
-    font-size: 0.82rem !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    border-radius: 0.75rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.btn-danger:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-.ts-confirm-delete {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #ef4444;
-}
-
-/* Dark mode */
+/* Dark mode overrides */
 .dark-mode .ts-card-note {
-    background: rgba(79, 70, 229, 0.08);
+    background: rgba(129, 140, 248, 0.1);
 }
 
-.dark-mode .ts-tab {
-    color: rgba(255,255,255,0.5);
-    border-color: rgba(255,255,255,0.1);
-}
-
-.dark-mode .ts-tab:hover {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+.dark-mode .ts-tab.active {
+    background: var(--primary-color);
+    color: white;
 }
 
 /* -------- Responsive -------- */
-@media (max-width: 768px) {
-    .ts-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .ts-header h1 {
-        font-size: 1.8rem;
-    }
-
-    .ts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .ts-form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .ts-form-group--wide {
-        grid-column: span 1;
-    }
-
-    .ts-form-actions {
-        flex-direction: column;
-    }
-
-    .ts-card-actions {
-        flex-direction: column;
-    }
-}
-
-/* ======================================================
-   PRINT STYLES
-   ====================================================== */
-
-/* Hide print section on screen */
-.print-only {
-    display: none;
-}
-
+/* Print Overrides */
 @media print {
-    /* Hide everything except print section */
-    .no-print,
-    .navbar,
-    .navbar-logo,
-    .navbar-nav,
-    .navbar-actions {
-        display: none !important;
-    }
-
-    .print-only {
-        display: block !important;
-    }
-
     .ts-container {
         padding: 0;
-        gap: 0;
-        max-width: 100%;
-    }
-
-    body {
-        background: white !important;
-        color: #000 !important;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 12pt;
-    }
-
-    /* ---- Print Header ---- */
-    .print-header {
-        text-align: center;
-        border-bottom: 2.5px solid #111;
-        padding-bottom: 10pt;
-        margin-bottom: 14pt;
-    }
-
-    .print-title {
-        font-size: 22pt;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #000;
-        margin: 0 0 4pt;
-    }
-
-    .print-subtitle {
-        font-size: 12pt;
-        color: #444;
-        margin: 0 0 10pt;
-    }
-
-    .print-meta {
-        display: flex;
-        justify-content: center;
-        gap: 40pt;
-        font-size: 10pt;
-        color: #333;
-    }
-
-    /* ---- Print Table ---- */
-    .print-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 4pt;
-        page-break-inside: auto;
-    }
-
-    .print-table thead {
-        display: table-header-group;
-    }
-
-    .print-table thead tr {
-        background-color: #1a1a2e !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .print-table th {
-        background-color: #1a1a2e !important;
-        color: #ffffff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        padding: 9pt 10pt;
-        text-align: left;
-        font-size: 10pt;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        border: 1px solid #333;
-    }
-
-    .print-table td {
-        padding: 8pt 10pt;
-        font-size: 10.5pt;
-        vertical-align: top;
-        border: 1px solid #bbb;
-        color: #111;
-    }
-
-    .row-even td { background-color: #ffffff; }
-    .row-odd  td {
-        background-color: #f3f4f9 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    /* Column widths */
-    .col-no      { width: 6%;  text-align: center; font-weight: 700; }
-    .col-date    { width: 18%; }
-    .col-subject { width: 20%; }
-    .col-syllabus{ width: 40%; }
-    .col-status  { width: 10%; text-align: center; }
-
-    .print-date {
-        font-weight: 700;
-        font-size: 10.5pt;
-    }
-
-    .print-time {
-        font-size: 9.5pt;
-        color: #555;
-        margin-top: 2pt;
-    }
-
-    .print-test-title {
-        font-size: 9pt;
-        color: #555;
-        margin-top: 2pt;
-        font-style: italic;
-    }
-
-    .print-note {
-        font-size: 9pt;
-        color: #555;
-        margin-top: 4pt;
-        font-style: italic;
-    }
-
-    .na-text {
-        color: #aaa;
-        font-size: 11pt;
-    }
-
-    /* Print badge */
-    .print-badge {
-        display: inline-block;
-        padding: 2pt 6pt;
-        border-radius: 3pt;
-        font-size: 8.5pt;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .print-badge.status-upcoming  { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-    .print-badge.status-ongoing   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
-    .print-badge.status-completed { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
-    .print-badge.status-cancelled { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-
-    /* ---- Print Footer ---- */
-    .print-footer {
-        margin-top: 24pt;
-        border-top: 1.5px solid #333;
-        padding-top: 12pt;
-    }
-
-    .print-sig {
-        display: flex;
-        justify-content: space-between;
-        font-size: 10pt;
-        color: #333;
-        margin-bottom: 10pt;
-    }
-
-    .print-footer-note {
-        text-align: center;
-        font-size: 9pt;
-        color: #666;
         margin: 0;
     }
+    .print-title {
+        font-size: 28pt !important;
+        font-family: inherit;
+    }
+    .print-table th {
+        background-color: #0f172a !important;
+    }
+    .row-odd td {
+        background-color: #f8fafc !important;
+    }
+}
 
-    /* Page settings */
-    @page {
-        margin: 1.5cm 2cm;
-        size: A4 landscape;
+@media (max-width: 768px) {
+    .ts-container {
+        padding: 1.5rem;
+    }
+    .ts-header h1 {
+        font-size: 2rem;
+    }
+    .ts-stats {
+        grid-template-columns: 1fr 1fr;
     }
 }

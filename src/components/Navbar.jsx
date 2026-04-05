@@ -77,7 +77,17 @@ const Navbar = () => {
           className="theme-toggle-btn"
           title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          {isDarkMode ? <Sun size={20} className="text-muted" /> : <Moon size={20} className="text-muted" />}
+          {isDarkMode ? (
+            <>
+              <Sun size={20} />
+              <span>Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon size={20} />
+              <span>Dark Mode</span>
+            </>
+          )}
         </button>
       </div>
     </div>
