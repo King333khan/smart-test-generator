@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays } from 'lucide-react';
+import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut } from 'lucide-react';
+import { useAuth } from '../utils/AuthContext';
 import appLogo from '../assets/logo.png';
 import './Navbar.css';
-
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+    const { signOut } = useAuth();
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     // Check local storage for theme preference on load
@@ -24,6 +25,12 @@ const Navbar = () => {
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
+    }
+  };
+
+  const handleLogout = async () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      await signOut();
     }
   };
 
@@ -88,6 +95,15 @@ const Navbar = () => {
               <span>Dark Mode</span>
             </>
           )}
+        </button>
+
+        <button
+          onClick={handleLogout}
+          className="theme-toggle-btn logout-btn"
+          style={{ color: '#ef4444' }}
+        >
+          <LogOut size={20} />
+          <span>Sign Out</span>
         </button>
       </div>
     </div>

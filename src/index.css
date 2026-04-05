@@ -114,6 +114,19 @@ body {
   }
 }
 
+/* Auth Layout */
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+}
+
+.auth-content {
+  width: 100%;
+}
+
 /* Animations */
 .fade-in {
   animation: fadeIn 0.5s ease-out;

@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider, useAuth } from './utils/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import CreateTest from './pages/CreateTest';
@@ -8,25 +10,47 @@ import ViewTest from './pages/ViewTest';
 import Settings from './pages/Settings';
 import ManageQuestions from './pages/ManageQuestions';
 import TestSchedule from './pages/TestSchedule';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+
+const AppContent = () => {
+  const { user } = useAuth();
+  const location = useLocation();
+  const isAuthPage = ['/login', '/signup'].includes(location.pathname);
+
+  return (
+    <div className={user && !isAuthPage ? "dashboard-layout" : "auth-layout"}>
+      {user && !isAuthPage && <Navbar />}
+      <main className={user && !isAuthPage ? "main-content" : "auth-content"}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+          <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
+
+          {/* Protected Routes */}
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/create" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
+          <Route path="/saved" element={<ProtectedRoute><SavedTests /></ProtectedRoute>} />
+          <Route path="/past-papers" element={<ProtectedRoute><PastPapers /></ProtectedRoute>} />
+          <Route path="/manage-questions" element={<ProtectedRoute><ManageQuestions /></ProtectedRoute>} />
+          <Route path="/test-schedule" element={<ProtectedRoute><TestSchedule /></ProtectedRoute>} />
+          <Route path="/test/:id" element={<ProtectedRoute><ViewTest /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
+    </div>
+  );
+};
 
 function App() {
   return (
     <Router>
-      <div className="dashboard-layout">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/create" element={<CreateTest />} />
-            <Route path="/saved" element={<SavedTests />} />
-            <Route path="/past-papers" element={<PastPapers />} />
-            <Route path="/manage-questions" element={<ManageQuestions />} />
-            <Route path="/test-schedule" element={<TestSchedule />} />
-            <Route path="/test/:id" element={<ViewTest />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </main>
-      </div>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }
