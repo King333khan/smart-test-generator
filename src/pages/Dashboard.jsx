@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
-import { FileText, Calendar, Activity, Tag } from 'lucide-react';
+import { useAuth } from '../utils/AuthContext';
+import { FileText, Calendar, Activity, Tag, Crown, ShieldAlert } from 'lucide-react';
 
 const Dashboard = () => {
+    const { profile, isPro, isSubscriptionActive } = useAuth();
     const [stats, setStats] = useState({
         testsToday: 0,
         totalTests: 0,
@@ -85,14 +87,55 @@ const Dashboard = () => {
     const getClassName = (id) => CLASSES.find(c => c.id === id)?.name || id;
     const getSubjectName = (clsId, subId) => SUBJECTS[clsId]?.find(s => s.id === subId)?.name || subId;
 
+    const usagePercentage = profile ? Math.min(Math.round((profile.tests_count / profile.max_tests) * 100), 100) : 0;
+
     return (
         <div className="glass fade-in" style={{ padding: '2.5rem', borderRadius: 'var(--radius-lg)', minHeight: 'calc(100vh - 5rem)' }}>
-            <div style={{ marginBottom: '2.5rem' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>Overview</h1>
-                <p className="text-muted">Welcome back! Here's what's happening with your tests today.</p>
+            <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>Overview</h1>
+                    <p className="text-muted">Welcome back! Here's what's happening with your tests today.</p>
+                </div>
+                
+                {/* Subscription Badge */}
+                <div className={`glass ${isPro ? 'pro-badge' : 'free-badge'}`} style={{ 
+                    padding: '0.75rem 1.25rem', 
+                    borderRadius: '999px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    border: '1px solid currentColor',
+                    background: isPro ? 'rgba(255, 215, 0, 0.1)' : 'rgba(100, 100, 100, 0.1)',
+                    color: isPro ? '#b8860b' : 'var(--text-muted)'
+                }}>
+                    {isPro ? <Crown size={18} fill="currentColor" /> : <Activity size={18} />}
+                    <span style={{ fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.85rem' }}>
+                        {isPro ? `${profile?.plan_type} Plan` : 'Free Plan'}
+                    </span>
+                    {!isSubscriptionActive && (
+                        <span style={{ color: '#ef4444', fontSize: '0.75rem', fontWeight: '800' }}>• INACTIVE</span>
+                    )}
+                </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
+                {/* Usage Stats (New) */}
+                <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius-md)', background: 'var(--card-bg)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Test Usage</h3>
+                        <ShieldAlert size={20} className={usagePercentage > 80 ? 'text-danger' : 'text-muted opacity-50'} />
+                    </div>
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                            <span style={{ fontWeight: '800', fontSize: '1.5rem' }}>{profile?.tests_count || 0}<span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/{profile?.max_tests || 10}</span></span>
+                            <span style={{ fontWeight: '700', color: usagePercentage > 80 ? '#ef4444' : 'var(--primary-color)' }}>{usagePercentage}%</span>
+                        </div>
+                        <div style={{ width: '100%', background: 'var(--bg-color)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: `${usagePercentage}%`, height: '100%', background: usagePercentage > 80 ? '#ef4444' : 'var(--primary-color)', transition: 'width 1s ease' }}></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius-md)', background: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tests Today</h3>

@@ -29,7 +29,7 @@ const StepIndicator = ({ currentStep }) => {
 };
 
 const CreateTest = () => {
-    const { user } = useAuth();
+    const { user, profile, isPro, refreshProfile } = useAuth();
     const [step, setStep] = useState(1);
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [testData, setTestData] = useState({
@@ -45,6 +45,7 @@ const CreateTest = () => {
     });
 
     const [isSaved, setIsSaved] = useState(false);
+    const isLimitReached = !isPro && profile && profile.tests_count >= profile.max_tests;
 
     // Fetch profile data from Supabase
     useEffect(() => {
@@ -185,14 +186,23 @@ const CreateTest = () => {
         window.print();
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const existingTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
         const newTest = {
             ...testData,
             id: Date.now().toString(),
             dateCreated: new Date().toISOString()
         };
+        
+        // Save to local storage (for now)
         localStorage.setItem('savedTests', JSON.stringify([newTest, ...existingTests]));
+        
+        // Increment count in Supabase
+        if (user) {
+            await supabase.rpc('increment_test_count', { row_id: user.id });
+            await refreshProfile();
+        }
+
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
     };
@@ -648,16 +658,24 @@ const CreateTest = () => {
                 )}
                 <div style={{ flex: 1 }}></div>
                 {step < 4 ? (
-                    <button
-                        className="btn"
-                        onClick={nextStep}
-                        disabled={
-                            (step === 1 && (!testData.cls || !testData.subject)) ||
-                            (step === 2 && testData.chapters.length === 0)
-                        }
-                    >
-                        {step === 3 ? 'Generate Paper' : 'Next Step'} <ChevronRight size={18} />
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        {isLimitReached && step === 3 && (
+                            <div style={{ color: '#ef4444', fontWeight: '700', background: '#fee2e2', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.9rem' }}>
+                                ⚠️ Test Limit Reached (Free Plan). Please upgrade to continue.
+                            </div>
+                        )}
+                        <button
+                            className="btn"
+                            onClick={nextStep}
+                            disabled={
+                                (step === 1 && (!testData.cls || !testData.subject)) ||
+                                (step === 2 && testData.chapters.length === 0) ||
+                                (step === 3 && isLimitReached)
+                            }
+                        >
+                            {step === 3 ? 'Generate Paper' : 'Next Step'} <ChevronRight size={18} />
+                        </button>
+                    </div>
                 ) : (
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                         {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500' }}>✓ Saved successfully!</span>}
