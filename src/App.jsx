@@ -12,6 +12,7 @@ import ManageQuestions from './pages/ManageQuestions';
 import TestSchedule from './pages/TestSchedule';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Admin from './pages/Admin';
 
 const AppContent = () => {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ const AppContent = () => {
           <Route path="/test-schedule" element={<ProtectedRoute><TestSchedule /></ProtectedRoute>} />
           <Route path="/test/:id" element={<ProtectedRoute><ViewTest /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
