@@ -112,6 +112,16 @@ const CreateTest = () => {
         setTestData(prev => ({ ...prev, config: { ...prev.config, [key]: parseInt(value) || 0 } }));
     };
 
+    // Calculate total marks dynamically
+    const calculateTotalMarks = () => {
+        const mcqTotal = (testData.config.mcqs + testData.customQs.filter(q => q.type === 'mcq').length) * (testData.config.mcqMarks || 1);
+        const shortTotal = (testData.config.shortQsAttempt || testData.config.shortQs) * (testData.config.shortQMarks || 2);
+        const longTotal = (testData.config.longQsAttempt || testData.config.longQs) * (testData.config.longQMarks || 5);
+        return mcqTotal + shortTotal + longTotal;
+    };
+
+    const actualTotalMarks = calculateTotalMarks();
+
     const nextStep = () => {
         if (step === 1 && (!testData.cls || !testData.subject)) return;
         if (step === 2 && testData.chapters.length === 0) return;
@@ -326,14 +336,12 @@ const CreateTest = () => {
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label>Total Marks</label>
-                                <input
-                                    type="number"
-                                    className="form-input"
-                                    value={testData.config.totalMarks}
-                                    onChange={e => updateConfig('totalMarks', e.target.value)}
-                                />
+                            <div className="form-group" style={{ background: 'var(--primary-light)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-color)' }}>
+                                <label style={{ color: 'var(--primary-color)', fontWeight: '800' }}>Calculated Total Marks</label>
+                                <div style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-color)' }}>
+                                    {actualTotalMarks}
+                                </div>
+                                <p style={{ fontSize: '0.75rem', margin: '0.25rem 0 0 0', opacity: 0.7 }}>Automatic sum of all sections</p>
                             </div>
 
                             <div className="nav-divider" style={{ margin: '2rem 0' }}></div>
@@ -464,7 +472,7 @@ const CreateTest = () => {
                                 <div className="paper-meta">
                                     <div><strong>Class:</strong> {CLASSES.find(c => c.id === testData.cls)?.name || ''}</div>
                                     <div><strong>Subject:</strong> {SUBJECTS[testData.cls]?.find(s => s.id === testData.subject)?.name || ''}</div>
-                                    <div><strong>Total Marks:</strong> {testData.config.totalMarks}</div>
+                                    <div><strong>Total Marks:</strong> {actualTotalMarks}</div>
                                     <div><strong>Time Allowed:</strong> 2 Hours</div>
                                 </div>
 
