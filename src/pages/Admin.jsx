@@ -7,28 +7,47 @@ const Admin = () => {
     const { user } = useAuth();
     const [profiles, setProfiles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
     // OWNER EMAIL CHECK (Security)
     const OWNER_EMAIL = 'king333khan@gmail.com'; 
     const isOwner = user?.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
 
+    const fetchProfiles = async () => {
+        setLoading(true);
+        setError(null);
+
+        // Safety timeout to prevent infinite loading
+        const timeout = setTimeout(() => {
+            if (loading) {
+                setLoading(false);
+                setError('Loading timed out. Please check your internet or Supabase RLS policies.');
+            }
+        }, 7000);
+
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('id, institute_name, plan_type, tests_count, max_tests, subscription_status, updated_at')
+                .order('updated_at', { ascending: false });
+
+            if (error) throw error;
+            if (data) setProfiles(data);
+        } catch (err) {
+            console.error('Error loading profiles:', err);
+            setError(err.message || 'Failed to load profiles. Check RLS policies.');
+        } finally {
+            clearTimeout(timeout);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (isOwner) {
             fetchProfiles();
         }
-    }, [isOwner]);
-
-    const fetchProfiles = async () => {
-        setLoading(true);
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .order('updated_at', { ascending: false });
-
-        if (data) setProfiles(data);
-        setLoading(false);
-    };
+    }, [isOwner]); // isOwner handles user loading state from AuthContext
 
     const togglePlan = async (profileId, currentPlan) => {
         const newPlan = currentPlan === 'Pro' ? 'Free' : 'Pro';
@@ -102,6 +121,13 @@ const Admin = () => {
                     <tbody>
                         {loading ? (
                             <tr><td colSpan="5" style={{ padding: '4rem', textAlign: 'center' }}>Loading profiles...</td></tr>
+                        ) : error ? (
+                            <tr>
+                                <td colSpan="5" style={{ padding: '4rem', textAlign: 'center' }}>
+                                    <div style={{ color: '#ef4444', fontWeight: '700' }}>Error: {error}</div>
+                                    <button className="btn" style={{ marginTop: '1rem' }} onClick={fetchProfiles}>Retry</button>
+                                </td>
+                            </tr>
                         ) : filteredProfiles.length === 0 ? (
                             <tr><td colSpan="5" style={{ padding: '4rem', textAlign: 'center' }}>No institutes found.</td></tr>
                         ) : (
