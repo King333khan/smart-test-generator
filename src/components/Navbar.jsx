@@ -32,13 +32,15 @@ const Navbar = () => {
     if (window.confirm('Are you sure you want to sign out?')) {
       try {
         console.log('Attempting sign out...');
-        const { error } = await signOut();
-        if (error) throw error;
-        localStorage.clear(); // Clear local state for a fresh start
-        console.log('Sign out successful.');
+        // Try graceful sign out
+        await signOut();
       } catch (err) {
-        console.error('Logout error:', err);
-        alert('Logout failed: ' + (err.message || 'Unknown error'));
+        console.error('Graceful sign out failed, forcing cleanup:', err);
+      } finally {
+        // ALWAYS clear local state and force redirect to login
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/login';
       }
     }
   };
