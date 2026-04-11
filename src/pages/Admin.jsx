@@ -124,8 +124,16 @@ const Admin = () => {
                         ) : error ? (
                             <tr>
                                 <td colSpan="5" style={{ padding: '4rem', textAlign: 'center' }}>
-                                    <div style={{ color: '#ef4444', fontWeight: '700' }}>Error: {error}</div>
-                                    <button className="btn" style={{ marginTop: '1rem' }} onClick={fetchProfiles}>Retry</button>
+                                    <div className="glass" style={{ padding: '2rem', border: '1px solid #ef4444' }}>
+                                        <h3 style={{ color: '#ef4444', marginBottom: '1rem' }}>⚠️ Connection / Permission Error</h3>
+                                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                                            Supabase could not load profiles. This is usually due to <strong>Row Level Security (RLS)</strong> policies or an invalid API key.
+                                        </p>
+                                        <code style={{ display: 'block', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderRadius: '4px', textAlign: 'left', fontSize: '0.8rem', whiteSpace: 'pre-wrap' }}>
+                                            Details: {error}
+                                        </code>
+                                        <button className="btn" style={{ marginTop: '1.5rem', background: '#ef4444' }} onClick={fetchProfiles}>Retry Connection</button>
+                                    </div>
                                 </td>
                             </tr>
                         ) : filteredProfiles.length === 0 ? (

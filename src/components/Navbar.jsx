@@ -30,7 +30,16 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     if (window.confirm('Are you sure you want to sign out?')) {
-      await signOut();
+      try {
+        console.log('Attempting sign out...');
+        const { error } = await signOut();
+        if (error) throw error;
+        localStorage.clear(); // Clear local state for a fresh start
+        console.log('Sign out successful.');
+      } catch (err) {
+        console.error('Logout error:', err);
+        alert('Logout failed: ' + (err.message || 'Unknown error'));
+      }
     }
   };
 

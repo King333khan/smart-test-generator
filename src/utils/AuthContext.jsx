@@ -77,6 +77,20 @@ export const AuthProvider = ({ children }) => {
         };
     }, []);
 
+    // Monitoring effect
+    useEffect(() => {
+        if (user) {
+            console.log('✅ Auth State: User detected', user.email);
+            if (profile) {
+                console.log('✅ Auth State: Profile loaded', profile.institute_name, profile.plan_type);
+            } else {
+                console.log('⏳ Auth State: Profile still loading...');
+            }
+        } else {
+            console.log('👤 Auth State: No user logged in');
+        }
+    }, [user, profile]);
+
     const value = {
         signUp: (data) => supabase.auth.signUp(data),
         signIn: (data) => supabase.auth.signInWithPassword(data),
