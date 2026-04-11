@@ -11,7 +11,7 @@ const Admin = () => {
 
     // OWNER EMAIL CHECK (Security)
     const OWNER_EMAIL = 'king333khan@gmail.com'; 
-    const isOwner = user?.email === OWNER_EMAIL;
+    const isOwner = user?.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
 
     useEffect(() => {
         if (isOwner) {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut } from 'lucide-react';
+import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../utils/AuthContext';
 import appLogo from '../assets/logo.png';
 import './Navbar.css';
 const Navbar = () => {
-    const { signOut } = useAuth();
+    const { user, signOut } = useAuth();
     const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -76,6 +76,13 @@ const Navbar = () => {
           <Settings size={18} />
           <span>Settings</span>
         </NavLink>
+
+        {user && user.email === 'king333khan@gmail.com' && (
+          <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} style={{ color: 'var(--primary-color)' }}>
+            <ShieldAlert size={18} />
+            <span>Master Admin</span>
+          </NavLink>
+        )}
       </nav>
 
       <div className="navbar-actions">
