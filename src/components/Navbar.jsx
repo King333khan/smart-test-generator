@@ -77,7 +77,7 @@ const Navbar = () => {
           <span>Settings</span>
         </NavLink>
 
-        {user && user.email === 'king333khan@gmail.com' && (
+        {user && user.email?.toLowerCase().trim() === 'king333khan@gmail.com' && (
           <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} style={{ color: 'var(--primary-color)' }}>
             <ShieldAlert size={18} />
             <span>Master Admin</span>
