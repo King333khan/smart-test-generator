@@ -18,14 +18,6 @@ const Admin = () => {
         setLoading(true);
         setError(null);
 
-        // Safety timeout to prevent infinite loading
-        const timeout = setTimeout(() => {
-            if (loading) {
-                setLoading(false);
-                setError('Loading timed out. Please check your internet or Supabase RLS policies.');
-            }
-        }, 7000);
-
         try {
             const { data, error } = await supabase
                 .from('profiles')
@@ -38,7 +30,6 @@ const Admin = () => {
             console.error('Error loading profiles:', err);
             setError(err.message || 'Failed to load profiles. Check RLS policies.');
         } finally {
-            clearTimeout(timeout);
             setLoading(false);
         }
     };
