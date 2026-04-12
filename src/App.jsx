@@ -16,16 +16,18 @@ const TestSchedule = lazy(() => import('./pages/TestSchedule'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const Admin = lazy(() => import('./pages/Admin'));
+const Landing = lazy(() => import('./pages/Landing'));
 
 const AppContent = () => {
   const { user } = useAuth();
   const location = useLocation();
   const isAuthPage = ['/login', '/signup'].includes(location.pathname);
+  const isLandingPage = !user && location.pathname === '/';
 
   return (
-    <div className={user && !isAuthPage ? "dashboard-layout" : "auth-layout"}>
+    <div className={user && !isAuthPage ? "dashboard-layout" : (isLandingPage ? "" : "auth-layout")}>
       {user && !isAuthPage && <Navbar />}
-      <main className={user && !isAuthPage ? "main-content" : "auth-content"}>
+      <main className={user && !isAuthPage ? "main-content" : (isLandingPage ? "" : "auth-content")}>
         <Suspense fallback={
           <div className="glass" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             <div className="loading-spinner"></div>
@@ -38,7 +40,7 @@ const AppContent = () => {
             <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
 
             {/* Protected Routes */}
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/" element={!user ? <Landing /> : <ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/create" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
             <Route path="/saved" element={<ProtectedRoute><SavedTests /></ProtectedRoute>} />
             <Route path="/past-papers" element={<ProtectedRoute><PastPapers /></ProtectedRoute>} />
