@@ -123,15 +123,15 @@ const Billing = () => {
                         
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
                             <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem' }}><Smartphone size={20} /> JazzCash/EasyPaisa</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem' }}><Smartphone size={20} /> JazzCash</div>
                                 <div style={{ fontSize: '1.25rem', fontWeight: '800' }}>0300-2379190</div>
                                 <div className="text-muted" style={{ fontSize: '0.9rem' }}>Account Title: Muhammad Akmal Bashir</div>
                             </div>
                             
                             <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 'bold', marginBottom: '0.5rem' }}><Landmark size={20} /> Bank Transfer</div>
-                                <div style={{ fontSize: '1.25rem', fontWeight: '800' }}>PK20 MEEZ 0001 2345 6789</div>
-                                <div className="text-muted" style={{ fontSize: '0.9rem' }}>Bank: Meezan Bank<br/>Title: Smart Test Institute</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 'bold', marginBottom: '0.5rem' }}><Smartphone size={20} /> EasyPaisa</div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: '800' }}>0341-8517882</div>
+                                <div className="text-muted" style={{ fontSize: '0.9rem' }}>Account Title: Muhammad Akmal Bashir</div>
                             </div>
                         </div>
                     </div>
