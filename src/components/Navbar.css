@@ -38,6 +38,23 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar for Navbar */
+.navbar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.navbar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+.navbar-nav::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.navbar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 .nav-link {
