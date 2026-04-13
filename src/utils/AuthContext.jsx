@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
             if (data) {
                 // FORCE OVERRIDE FOR MASTER ADMIN
                 if (userEmail && userEmail.toLowerCase() === 'king333khan@gmail.com') {
-                    data.plan_type = 'Master Admin';
+                    data.plan_type = 'Pro';
                     data.subscription_status = 'active';
                     data.max_tests = 99999;
                 }
