@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchProfile = async (userId) => {
+    const fetchProfile = async (userId, userEmail) => {
         if (!userId) {
             setProfile(null);
             return;
@@ -22,6 +22,12 @@ export const AuthProvider = ({ children }) => {
                 .single();
 
             if (data) {
+                // FORCE OVERRIDE FOR MASTER ADMIN
+                if (userEmail && userEmail.toLowerCase() === 'king333khan@gmail.com') {
+                    data.plan_type = 'Master Admin';
+                    data.subscription_status = 'active';
+                    data.max_tests = 99999;
+                }
                 setProfile(data);
             }
         } catch (err) {
@@ -42,7 +48,7 @@ export const AuthProvider = ({ children }) => {
                 const currentUser = session?.user ?? null;
                 setUser(currentUser);
                 if (currentUser) {
-                    await fetchProfile(currentUser.id);
+                    await fetchProfile(currentUser.id, currentUser.email);
                 }
             } catch (err) {
                 console.error('Session error:', err);
@@ -60,7 +66,7 @@ export const AuthProvider = ({ children }) => {
                 const currentUser = session?.user ?? null;
                 setUser(currentUser);
                 if (currentUser) {
-                    await fetchProfile(currentUser.id);
+                    await fetchProfile(currentUser.id, currentUser.email);
                 } else {
                     setProfile(null);
                 }
