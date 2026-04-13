@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../utils/AuthContext';
 import appLogo from '../assets/logo.png';
 import './Navbar.css';
+
 const Navbar = () => {
     const { user, signOut } = useAuth();
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const navigate = useNavigate();
 
   useEffect(() => {
     // Check local storage for theme preference on load
@@ -29,19 +31,19 @@ const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to sign out?')) {
-      try {
-        console.log('Attempting sign out...');
-        // Try graceful sign out
-        await signOut();
-      } catch (err) {
-        console.error('Graceful sign out failed, forcing cleanup:', err);
-      } finally {
-        // ALWAYS clear local state and force redirect to login
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = '/login';
-      }
+    try {
+      // 2-second timeout to ensure it doesn't hang forever
+      await Promise.race([
+          signOut(),
+          new Promise(resolve => setTimeout(resolve, 2000))
+      ]);
+    } catch (err) {
+      console.error('Sign out error:', err);
+    } finally {
+      // Clear data and redirect seamlessly to the Landing page
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate('/');
     }
   };
 
