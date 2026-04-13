@@ -29,9 +29,9 @@ const AppContent = () => {
       {user && !isAuthPage && <Navbar />}
       <main className={user && !isAuthPage ? "main-content" : (isLandingPage ? "" : "auth-content")}>
         <Suspense fallback={
-          <div className="glass" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <div className="loading-spinner"></div>
-            <p style={{ marginLeft: '1rem', fontWeight: '600' }}>Loading component...</p>
+          <div className="premium-loader-container">
+            <div className="premium-loader"></div>
+            <div className="premium-loader-text">Loading Portal...</div>
           </div>
         }>
           <Routes>

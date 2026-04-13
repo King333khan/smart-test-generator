@@ -104,7 +104,12 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {loading ? (
+                <div className="premium-loader-container fade-in">
+                    <div className="premium-loader"></div>
+                    <div className="premium-loader-text">Authenticating...</div>
+                </div>
+            ) : children}
         </AuthContext.Provider>
     );
 };
