@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut, ShieldAlert } from 'lucide-react';
+import { Home, FileSignature, Save, Settings, Library, Moon, Sun, CalendarDays, LogOut, ShieldAlert, CreditCard } from 'lucide-react';
 import { useAuth } from '../utils/AuthContext';
 import appLogo from '../assets/logo.png';
 import './Navbar.css';
@@ -83,6 +83,11 @@ const Navbar = () => {
         <NavLink to="/test-schedule" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           <CalendarDays size={18} />
           <span>Test Schedule</span>
+        </NavLink>
+
+        <NavLink to="/billing" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <CreditCard size={18} />
+          <span>Billing</span>
         </NavLink>
 
         <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>

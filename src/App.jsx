@@ -13,6 +13,7 @@ const ViewTest = lazy(() => import('./pages/ViewTest'));
 const Settings = lazy(() => import('./pages/Settings'));
 const ManageQuestions = lazy(() => import('./pages/ManageQuestions'));
 const TestSchedule = lazy(() => import('./pages/TestSchedule'));
+const Billing = lazy(() => import('./pages/Billing'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const Admin = lazy(() => import('./pages/Admin'));
@@ -47,6 +48,7 @@ const AppContent = () => {
             <Route path="/manage-questions" element={<ProtectedRoute><ManageQuestions /></ProtectedRoute>} />
             <Route path="/test-schedule" element={<ProtectedRoute><TestSchedule /></ProtectedRoute>} />
             <Route path="/test/:id" element={<ProtectedRoute><ViewTest /></ProtectedRoute>} />
+            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             
