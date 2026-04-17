@@ -651,7 +651,7 @@ const CreateTest = () => {
                                 )}
 
                                 {/* Subjective Part */}
-                                <div style={{ pageBreakBefore: 'always', marginTop: '20px' }}></div>
+                                <div style={{ pageBreakBefore: 'auto', marginTop: '20px' }}></div>
 
                                 {(testData.config.shortQs > 0 || testData.config.longQs > 0) && (
                                     <div className="question-section">

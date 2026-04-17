@@ -481,10 +481,29 @@
 
     html,
     body {
-        background: white;
+        background: transparent !important;
         height: 100%;
         margin: 0 !important;
         padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .paper-container {
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        background: transparent !important;
+    }
+
+    .watermark-bg {
+        opacity: 0.08 !important;
+        z-index: -1 !important;
+    }
+
+    .paper-header, .paper-body, .paper-footer {
+        background: transparent !important;
     }
 
     /* Hide all UI elements */
