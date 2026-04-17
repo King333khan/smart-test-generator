@@ -119,6 +119,12 @@ const Admin = () => {
         p.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // KPI Calculations
+    const totalInstitutes = profiles.length;
+    const proInstitutes = profiles.filter(p => p.plan_type === 'Pro').length;
+    const totalTestsGenerated = profiles.reduce((sum, p) => sum + (p.tests_count || 0), 0);
+    const totalRevenue = paymentRequests.filter(r => r.status === 'approved').reduce((sum, req) => sum + Number(req.amount), 0);
+
     return (
         <div className="glass fade-in" style={{ padding: '2.5rem', borderRadius: 'var(--radius-lg)', minHeight: 'calc(100vh - 5rem)' }}>
             <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
@@ -143,6 +149,41 @@ const Admin = () => {
                     >
                         <CreditCard size={18} /> Payment Requests
                     </button>
+                </div>
+            </div>
+
+            {/* KPI Dashboard Stats */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)', color: 'white', border: 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', opacity: 0.8 }}>
+                        <h3 style={{ fontSize: '1rem', margin: 0, fontWeight: '600' }}>Total Institutes</h3>
+                        <Users size={24} />
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800' }}>{totalInstitutes}</div>
+                </div>
+
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', opacity: 0.8 }}>
+                        <h3 style={{ fontSize: '1rem', margin: 0, fontWeight: '600' }}>Platform Revenue</h3>
+                        <CreditCard size={24} />
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800' }}>Rs. {totalRevenue.toLocaleString()}</div>
+                </div>
+
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white', border: 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', opacity: 0.8 }}>
+                        <h3 style={{ fontSize: '1rem', margin: 0, fontWeight: '600' }}>Pro Subscribers</h3>
+                        <Crown size={24} />
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800' }}>{proInstitutes}</div>
+                </div>
+
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', color: 'white', border: 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', opacity: 0.8 }}>
+                        <h3 style={{ fontSize: '1rem', margin: 0, fontWeight: '600' }}>Tests Generated</h3>
+                        <Clock size={24} />
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800' }}>{totalTestsGenerated}</div>
                 </div>
             </div>
 

@@ -420,9 +420,12 @@ const CreateTest = () => {
                                             <p style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.7 }}>Recommended: PNG with transparent background.</p>
                                         </div>
                                         <div className="form-group" style={{ justifyContent: 'center' }}>
-                                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
-                                                <input type="checkbox" checked={testData.showWatermark} onChange={(e) => updateData('showWatermark', e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--primary-color)' }} />
-                                                <span>Show Logo as Watermark in PDF</span>
+                                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: !isPro ? 'not-allowed' : 'pointer', fontSize: '0.9rem', opacity: !isPro ? 0.7 : 1 }}>
+                                                <input type="checkbox" disabled={!isPro} checked={testData.showWatermark} onChange={(e) => updateData('showWatermark', e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--primary-color)' }} />
+                                                <span>
+                                                    Show Logo as Watermark in PDF 
+                                                    {!isPro && <span style={{ fontSize: '0.65rem', background: '#fca5a5', color: '#7f1d1d', padding: '0.15rem 0.4rem', borderRadius: '4px', marginLeft: '0.5rem', fontWeight: 'bold' }}>PRO ONLY</span>}
+                                                </span>
                                             </label>
                                         </div>
                                     </div>
