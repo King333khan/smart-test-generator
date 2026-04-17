@@ -530,8 +530,22 @@
         margin: 0;
     }
 
+    .mcq-list {
+        display: block !important;
+    }
+
     .dual-mcq-item,
-    .dual-subjective-q,
+    .dual-subjective-q {
+        display: block !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-bottom: 1.5rem; /* ensure spacing remains */
+    }
+
+    .dual-mcq-item > div {
+        margin-bottom: 0.5rem; /* fallback for gap lost by removing flex */
+    }
+
     .short-qs,
     .long-qs {
         page-break-inside: avoid;
