@@ -51,11 +51,11 @@ const Navbar = () => {
       // 4. Background sign out attempt (don't wait for it if it's lagging)
       signOut().catch(() => {});
       
-      // 5. Hard redirect to login page
-      window.location.href = '/login';
+      // 5. Navigate to login page using SPA router (prevents 404)
+      navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);
-      window.location.href = '/login';
+      navigate('/login');
     }
   };
 
