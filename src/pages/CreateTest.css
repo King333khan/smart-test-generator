@@ -436,6 +436,42 @@
     padding-left: 1.5rem;
 }
 
+/* Watermark and Logo branding classes */
+.paper-container {
+    position: relative; 
+    overflow: hidden;
+}
+
+.watermark-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.08;
+    z-index: 0;
+    pointer-events: none;
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+/* Ensure content stays above watermark */
+.paper-header, .paper-body, .paper-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.institute-logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.institute-logo-img {
+    max-height: 80px;
+    object-fit: contain;
+}
+
 /* Print Styles */
 @media print {
     @page {

@@ -23,6 +23,8 @@ import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
 import { useAuth } from '../utils/AuthContext';
 import { supabase } from '../utils/supabaseClient';
+import Latex from 'react-latex-next';
+import html2pdf from 'html2pdf.js';
 import './CreateTest.css';
 
 const StepIndicator = ({ currentStep }) => {
@@ -60,7 +62,9 @@ const CreateTest = () => {
         instituteName: 'My School',
         testTitle: 'Monthly Assessment - 2026',
         address: '',
-        mobile: ''
+        mobile: '',
+        logo: null,
+        showWatermark: false
     });
 
     const [isSaved, setIsSaved] = useState(false);
@@ -142,6 +146,17 @@ const CreateTest = () => {
 
     const actualTotalMarks = calculateTotalMarks();
 
+    const handleLogoUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                updateData('logo', reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const nextStep = () => {
         if (step === 1 && (!testData.cls || !testData.subject)) return;
         if (step === 2 && testData.chapters.length === 0) return;
@@ -203,6 +218,36 @@ const CreateTest = () => {
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const handleExportPDF = () => {
+        const element = document.querySelector('.paper-container');
+        if (!element) return;
+        
+        // Save original styles
+        const originalMargin = element.style.margin;
+        const originalShadow = element.style.boxShadow;
+        const originalBorder = element.style.border;
+        
+        // Remove aesthetics for PDF
+        element.style.margin = '0';
+        element.style.boxShadow = 'none';
+        element.style.border = 'none';
+
+        const opt = {
+            margin:       0.5,
+            filename:     `${testData.testTitle.replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Restore original styles
+            element.style.margin = originalMargin;
+            element.style.boxShadow = originalShadow;
+            element.style.border = originalBorder;
+        });
     };
 
     const handleSave = async () => {
@@ -363,6 +408,24 @@ const CreateTest = () => {
                                         </div>
                                     </div>
                                 </div>
+                                
+                                {/* Logo and Watermark Settings */}
+                                <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '1.25rem', paddingTop: '1.25rem' }}>
+                                    <h4 style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-dark)' }}>Branding</h4>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                                        <div className="form-group">
+                                            <label style={{ fontSize: '0.8rem' }}>Upload Institute Logo</label>
+                                            <input type="file" accept="image/*" className="form-input" style={{ fontSize: '0.9rem', padding: '0.5rem' }} onChange={handleLogoUpload} />
+                                            <p style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.7 }}>Recommended: PNG with transparent background.</p>
+                                        </div>
+                                        <div className="form-group" style={{ justifyContent: 'center' }}>
+                                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                                <input type="checkbox" checked={testData.showWatermark} onChange={(e) => updateData('showWatermark', e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--primary-color)' }} />
+                                                <span>Show Logo as Watermark in PDF</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="form-group" style={{ background: 'var(--primary-light)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-color)' }}>
@@ -488,8 +551,17 @@ const CreateTest = () => {
                 {step === 4 && (
                     <div className="wizard-step fade-in" id="printable-area">
                         <div className="paper-container">
+                            {testData.showWatermark && testData.logo && (
+                                <img src={testData.logo} alt="" className="watermark-bg" />
+                            )}
+                            
                             {/* View rendered only on print / paper preview */}
                             <div className="paper-header">
+                                {testData.logo && (
+                                    <div className="institute-logo-container">
+                                        <img src={testData.logo} alt="Institute Logo" className="institute-logo-img" />
+                                    </div>
+                                )}
                                 <h1 className="institute-title">{testData.instituteName}</h1>
                                 {(testData.address || testData.mobile) && (
                                     <p style={{ textAlign: 'center', fontSize: '0.9rem', margin: '-0.5rem 0 0.5rem 0' }}>
@@ -536,13 +608,13 @@ const CreateTest = () => {
                                                 return (
                                                     <div key={i} className="dual-mcq-item">
                                                         <div className="mcq-question-row">
-                                                            <div className="mcq-en">{i + 1}. {q.en}</div>
+                                                            <div className="mcq-en">{i + 1}. <Latex>{q.en}</Latex></div>
                                                             <div className="mcq-ur">{q.ur} .{i + 1}</div>
                                                         </div>
                                                         <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
                                                             {[0, 1, 2, 3].map(optIndex => (
                                                                 <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                                                                    <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                                    <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                                     {q.urOptions?.[optIndex] && (
                                                                         <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
                                                                             {q.urOptions[optIndex]}
@@ -557,13 +629,13 @@ const CreateTest = () => {
                                             {testData.customQs.filter(q => q.type === 'mcq').map((q, i) => (
                                                 <div key={q.id} className="dual-mcq-item">
                                                     <div className="mcq-question-row">
-                                                        <div className="mcq-en">{testData.config.mcqs + i + 1}. {q.en || "Custom MCQ"}</div>
+                                                        <div className="mcq-en">{testData.config.mcqs + i + 1}. <Latex>{q.en || "Custom MCQ"}</Latex></div>
                                                         <div className="mcq-ur">{q.ur || "کسٹم ایم سی کیو"} .{testData.config.mcqs + i + 1}</div>
                                                     </div>
                                                     <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
                                                         {[0, 1, 2, 3].map(optIndex => (
                                                             <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                                                                <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                                <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                                 {q.urOptions?.[optIndex] && (
                                                                     <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
                                                                         {q.urOptions[optIndex]}
@@ -600,14 +672,14 @@ const CreateTest = () => {
                                                         const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i);
                                                         return (
                                                             <div key={i} className="dual-subjective-q">
-                                                                <div className="en">({i + 1}) {q.en}</div>
+                                                                <div className="en">({i + 1}) <Latex>{q.en}</Latex></div>
                                                                 <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
                                                             </div>
                                                         )
                                                     })}
                                                     {testData.customQs.filter(q => q.type === 'short').map((q, i) => (
                                                         <div key={q.id} className="dual-subjective-q">
-                                                            <div className="en">({testData.config.shortQs + i + 1}) {q.en || "Custom Short Question"}</div>
+                                                            <div className="en">({testData.config.shortQs + i + 1}) <Latex>{q.en || "Custom Short Question"}</Latex></div>
                                                             <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
                                                         </div>
                                                     ))}
@@ -633,11 +705,11 @@ const CreateTest = () => {
                                                                     <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
                                                                 </div>
                                                                 <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-                                                                    <div className="en">(a) {qA.en}</div>
+                                                                    <div className="en">(a) <Latex>{qA.en}</Latex></div>
                                                                     <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
                                                                 </div>
                                                                 <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
-                                                                    <div className="en">(b) {qB.en}</div>
+                                                                    <div className="en">(b) <Latex>{qB.en}</Latex></div>
                                                                     <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
                                                                 </div>
                                                             </div>
@@ -650,7 +722,7 @@ const CreateTest = () => {
                                                                 <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
                                                             </div>
                                                             <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-                                                                <div className="en">{q.en || "Custom Long Question"}</div>
+                                                                <div className="en"><Latex>{q.en || "Custom Long Question"}</Latex></div>
                                                                 <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
                                                             </div>
                                                         </div>
@@ -701,7 +773,10 @@ const CreateTest = () => {
                         <button className="btn btn-secondary" onClick={handleSave} disabled={isSaved}>
                             <Save size={18} /> {isSaved ? 'Saved' : 'Save Test'}
                         </button>
-                        <button className="btn" onClick={handlePrint}><Printer size={18} /> Print / Save as PDF</button>
+                        <button className="btn btn-secondary" onClick={handleExportPDF} style={{ color: '#0ea5e9', borderColor: '#bae6fd' }}>
+                            <FileDown size={18} /> Download PDF
+                        </button>
+                        <button className="btn" onClick={handlePrint}><Printer size={18} /> Print Sheet</button>
                     </div>
                 )}
             </div>

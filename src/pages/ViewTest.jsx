@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download, Files } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download, Files, FileDown } from 'lucide-react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
+import Latex from 'react-latex-next';
+import html2pdf from 'html2pdf.js';
 import './CreateTest.css';
 
 const ViewTest = () => {
@@ -121,6 +123,33 @@ const ViewTest = () => {
         document.body.removeChild(downloadLink);
     };
 
+    const handleExportPDF = () => {
+        if (!paperRef.current) return;
+        
+        const element = paperRef.current;
+        const originalMargin = element.style.margin;
+        const originalShadow = element.style.boxShadow;
+        const originalBorder = element.style.border;
+        
+        element.style.margin = '0';
+        element.style.boxShadow = 'none';
+        element.style.border = 'none';
+
+        const opt = {
+            margin:       0.5,
+            filename:     `${testData.testTitle ? testData.testTitle.replace(/\s+/g, '_') : 'Test_Paper'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.style.margin = originalMargin;
+            element.style.boxShadow = originalShadow;
+            element.style.border = originalBorder;
+        });
+    };
+
     if (!testData) return (
         <div className="glass" style={{ padding: '2rem', textAlign: 'center', minHeight: 'calc(100vh - 4rem)' }}>
             <h2>Test not found or could not be loaded.</h2>
@@ -158,13 +187,16 @@ const ViewTest = () => {
                             <Save size={16} /> Save Edits
                         </button>
                         <button className="btn btn-secondary" onClick={exportToWord} style={{ color: '#2563eb', borderColor: '#bfdbfe' }}>
-                            <Download size={16} /> Download Word
+                            <Download size={16} /> Word Doc
+                        </button>
+                        <button className="btn btn-secondary" onClick={handleExportPDF} style={{ color: '#0ea5e9', borderColor: '#bae6fd' }}>
+                            <FileDown size={16} /> Download PDF
                         </button>
                         <button className="btn btn-secondary" onClick={() => toggleSetting('pageBreak')} style={{ background: settings.pageBreak ? 'var(--primary-color)' : '', color: settings.pageBreak ? 'white' : '', borderColor: settings.pageBreak ? 'var(--primary-color)' : '' }}>
-                            <Files size={16} /> {settings.pageBreak ? 'Separate Pages' : 'Continuous'}
+                            <Files size={16} /> {settings.pageBreak ? 'Pages' : 'Continuous'}
                         </button>
                         <button className="btn" onClick={() => window.print()}>
-                            <Printer size={16} /> Print Test
+                            <Printer size={16} /> Print
                         </button>
                     </div>
                 </div>
@@ -207,6 +239,10 @@ const ViewTest = () => {
                 <div contentEditable={settings.isEditing} suppressContentEditableWarning={true} style={{ outline: settings.isEditing ? '2px dashed #cbd5e1' : 'none', padding: settings.isEditing ? '1rem' : '0', transition: 'all 0.2s' }}>
 
                     {/* Dynamic Header */}
+                    {testData.showWatermark && testData.logo && (
+                        <img src={testData.logo} alt="" className="watermark-bg" />
+                    )}
+
                     {settings.showHeader && (
                         <div className={`paper-header style-${settings.headerStyle}`} style={{
                             textAlign: settings.headerStyle === 'centered' ? 'center' : 'left',
@@ -214,6 +250,11 @@ const ViewTest = () => {
                             justifyContent: 'space-between',
                             borderBottom: settings.headerStyle === 'compact' ? '2px solid black' : '2px solid black'
                         }}>
+                            {testData.logo && settings.headerStyle !== 'compact' && (
+                                <div className="institute-logo-container">
+                                    <img src={testData.logo} alt="Institute Logo" className="institute-logo-img" />
+                                </div>
+                            )}
                             <div>
                                 <h1 className="institute-title" style={{ fontSize: settings.headerStyle === 'compact' ? '1.5rem' : '2rem' }}>{testData.instituteName}</h1>
                                 {settings.headerStyle !== 'compact' && (testData.address || testData.mobile) && (
@@ -277,13 +318,13 @@ const ViewTest = () => {
                                         return (
                                             <div key={i} className="dual-mcq-item" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '1rem' : '0' }}>
                                                 <div className="mcq-question-row">
-                                                    <div className="mcq-en">{i + 1}. {q.en}</div>
+                                                    <div className="mcq-en">{i + 1}. <Latex>{q.en}</Latex></div>
                                                     <div className="mcq-ur">{q.ur} .{i + 1}</div>
                                                 </div>
                                                 <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
                                                     {[0, 1, 2, 3].map(optIndex => (
                                                         <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                                                            <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                            <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                             {q.urOptions?.[optIndex] && (
                                                                 <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
                                                                     {q.urOptions[optIndex]}
@@ -298,13 +339,13 @@ const ViewTest = () => {
                                     {testData.customQs?.filter(q => q.type === 'mcq').map((q, i) => (
                                         <div key={q.id} className="dual-mcq-item" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '1rem' : '0' }}>
                                             <div className="mcq-question-row">
-                                                <div className="mcq-en">{testData.config.mcqs + i + 1}. {q.en || "Custom MCQ"}</div>
+                                                <div className="mcq-en">{testData.config.mcqs + i + 1}. <Latex>{q.en || "Custom MCQ"}</Latex></div>
                                                 <div className="mcq-ur">{q.ur || "کسٹم ایم سی کیو"} .{testData.config.mcqs + i + 1}</div>
                                             </div>
                                             <div className="mcq-options-row" style={{ alignItems: 'flex-start' }}>
                                                 {[0, 1, 2, 3].map(optIndex => (
                                                     <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                                                        <span>({String.fromCharCode(65 + optIndex)}) {q.options?.[optIndex] || `Option ${optIndex + 1}`}</span>
+                                                        <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                         {q.urOptions?.[optIndex] && (
                                                             <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
                                                                 {q.urOptions[optIndex]}
@@ -341,14 +382,14 @@ const ViewTest = () => {
                                                 const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i);
                                                 return (
                                                     <div key={i} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
-                                                        <div className="en">({i + 1}) {q.en}</div>
+                                                        <div className="en">({i + 1}) <Latex>{q.en}</Latex></div>
                                                         <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
                                                     </div>
                                                 )
                                             })}
                                             {testData.customQs?.filter(q => q.type === 'short').map((q, i) => (
                                                 <div key={q.id} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
-                                                    <div className="en">({testData.config.shortQs + i + 1}) {q.en || "Custom Short Question"}</div>
+                                                    <div className="en">({testData.config.shortQs + i + 1}) <Latex>{q.en || "Custom Short Question"}</Latex></div>
                                                     <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
                                                 </div>
                                             ))}
@@ -374,11 +415,11 @@ const ViewTest = () => {
                                                             <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-                                                            <div className="en">(a) {qA.en}</div>
+                                                            <div className="en">(a) <Latex>{qA.en}</Latex></div>
                                                             <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
-                                                            <div className="en">(b) {qB.en}</div>
+                                                            <div className="en">(b) <Latex>{qB.en}</Latex></div>
                                                             <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
                                                         </div>
                                                     </div>
@@ -391,7 +432,7 @@ const ViewTest = () => {
                                                         <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
                                                     </div>
                                                     <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-                                                        <div className="en">{q.en || "Custom Long Question"}</div>
+                                                        <div className="en"><Latex>{q.en || "Custom Long Question"}</Latex></div>
                                                         <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
                                                     </div>
                                                 </div>
