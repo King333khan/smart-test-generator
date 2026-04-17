@@ -32,22 +32,30 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // 2-second timeout for the network call
-      await Promise.race([
-          signOut(),
-          new Promise(resolve => setTimeout(resolve, 2000))
-      ]);
-    } catch (err) {
-      console.error('Sign out error:', err);
-    } finally {
-      // Manually clear Supabase auth tokens to guarantee logout
-      Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('sb-')) {
-              localStorage.removeItem(key);
-          }
-      });
+      // 1. Save settings we want to keep before clearing
+      const appSettings = localStorage.getItem('appSettings');
+      const savedTests = localStorage.getItem('savedTests');
+      const questionBank = localStorage.getItem('customQuestionBank');
+      const theme = localStorage.getItem('theme');
+
+      // 2. Nuke everything (This is the only way to be 100% sure logout works)
+      localStorage.clear();
       sessionStorage.clear();
-      window.location.href = '/';
+
+      // 3. Restore only the essential non-auth data
+      if (appSettings) localStorage.setItem('appSettings', appSettings);
+      if (savedTests) localStorage.setItem('savedTests', savedTests);
+      if (questionBank) localStorage.setItem('customQuestionBank', questionBank);
+      if (theme) localStorage.setItem('theme', theme);
+
+      // 4. Background sign out attempt (don't wait for it if it's lagging)
+      signOut().catch(() => {});
+      
+      // 5. Hard redirect to login page
+      window.location.href = '/login';
+    } catch (err) {
+      console.error('Logout error:', err);
+      window.location.href = '/login';
     }
   };
 
