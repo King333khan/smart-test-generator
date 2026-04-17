@@ -487,6 +487,7 @@
         padding: 0 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        font-size: 12px; /* make overall base font 12px for denser print */
     }
 
     .paper-container {
@@ -506,6 +507,44 @@
         background: transparent !important;
     }
 
+    /* Header Compactness */
+    .paper-header {
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+    .institute-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 0 !important;
+    }
+    .test-subtitle {
+        font-size: 1.1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .institute-logo-img {
+        max-height: 50px !important;
+    }
+    .paper-meta {
+        margin-bottom: 0.5rem !important;
+        font-size: 0.9rem !important;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.5rem;
+    }
+    .student-details {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Section Compactness */
+    .question-section {
+        margin-bottom: 1rem !important;
+    }
+    .section-title {
+        padding-bottom: 0.25rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
     /* Hide all UI elements */
     .no-print,
     .sidebar,
@@ -523,33 +562,65 @@
         width: 100% !important;
     }
 
-    .paper-container {
-        padding: 0;
-        border: none;
-        box-shadow: none;
-        margin: 0;
-    }
-
     .mcq-list {
         display: block !important;
+        gap: 0 !important;
+        margin-top: 0.5rem !important;
     }
 
+    /* Questions compactness and page breaks */
     .dual-mcq-item,
     .dual-subjective-q {
         display: block !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin-bottom: 1.5rem; /* ensure spacing remains */
+        margin-bottom: 0.75rem !important; /* significantly reduce gap */
+    }
+
+    .dual-mcq-item .mcq-question-row {
+        gap: 0.25rem !important;
+    }
+
+    .dual-mcq-item .mcq-options-row {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        margin-top: 0.25rem !important;
     }
 
     .dual-mcq-item > div {
-        margin-bottom: 0.5rem; /* fallback for gap lost by removing flex */
+        margin-bottom: 0.25rem; /* fallback for gap lost by removing flex */
     }
 
+    /* We MUST REMOVE page-break-inside: avoid from .short-qs and .long-qs 
+       otherwise the entire blocks get pushed to new pages leaving 50% blank pages */
     .short-qs,
     .long-qs {
-        page-break-inside: avoid;
-        break-inside: avoid;
+        page-break-inside: auto;
+        break-inside: auto;
+        margin-top: 0.5rem !important;
+    }
+    
+    .dual-lang-header {
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .dual-lang-header h3 {
+        font-size: 1rem !important;
+        margin: 0 !important;
+    }
+    
+    .dual-lang-header p {
+        margin: 0 !important;
+    }
+    
+    /* Slightly smaller urdu text for print */
+    .mcq-ur, .ur {
+        font-size: 1.1rem !important;
+        line-height: 1.4 !important;
+    }
+    .en {
+        font-size: 0.9rem !important;
+        line-height: 1.3 !important;
     }
 }
 
