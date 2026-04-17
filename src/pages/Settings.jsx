@@ -18,24 +18,19 @@ const Settings = () => {
     const [pwdSaved, setPwdSaved] = useState(false);
 
     useEffect(() => {
-        const savedSettings = JSON.parse(localStorage.getItem('appSettings')) || {
-            defaultInstitute: 'My School',
-            defaultTestTitle: 'Monthly Assessment - 2026',
-            address: '',
-            mobile: '',
-            theme: 'light',
-            logo: null
-        };
+        const local = JSON.parse(localStorage.getItem('appSettings')) || {};
         
-        // Avoid overriding local changes with blank/old DB data.
-        // We only use profile data if local storage is somehow empty.
-        if (profile) {
-            savedSettings.defaultInstitute = savedSettings.defaultInstitute || profile.institute_name;
-            savedSettings.address = savedSettings.address || profile.address;
-            savedSettings.mobile = savedSettings.mobile || profile.mobile;
-        }
+        // Remove hardcoded garbage from previous builds
+        if (local.defaultInstitute === 'My School') local.defaultInstitute = '';
 
-        setSettings(savedSettings);
+        setSettings({
+            defaultInstitute: local.defaultInstitute || profile?.institute_name || '',
+            defaultTestTitle: local.defaultTestTitle || 'Monthly Assessment - 2026',
+            address: local.address || '',
+            mobile: local.mobile || '',
+            theme: local.theme || 'light',
+            logo: local.logo || null
+        });
     }, [profile]);
 
     const handleChange = (e) => {
