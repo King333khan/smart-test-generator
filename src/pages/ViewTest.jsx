@@ -12,7 +12,7 @@ import './CreateTest.css';
 const ViewTest = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, profile, isPro, isSubscriptionActive } = useAuth();
     const paperRef = useRef(null);
     const [testData, setTestData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -520,9 +520,11 @@ const ViewTest = () => {
                             </div>
                         )}
                     </div>
-                    <div className="paper-footer" style={{ marginTop: '30px', textAlign: 'center', fontSize: '12px', color: '#555', borderTop: '1px dashed #ccc', paddingTop: '10px' }}>
-                        Designed by Muhammad Akmal Bashir | Smart Test Generator
-                    </div>
+                    {!isPro && (
+                        <div className="paper-footer" style={{ marginTop: '30px', textAlign: 'center', fontSize: '12px', color: '#555', borderTop: '1px dashed #ccc', paddingTop: '10px' }}>
+                            Designed by Muhammad Akmal Bashir | Smart Test Generator
+                        </div>
+                    )}
                 </div>
             </div>
         </div >

@@ -246,6 +246,38 @@ const Settings = () => {
                             {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500' }}>✓ Preferences updated</span>}
                         </div>
                     </div>
+                    
+                    {/* Branding Tier (Pro Only Feature) */}
+                    <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', background: 'white', marginTop: '2rem' }}>
+                        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <SettingsIcon size={20} className="text-muted" /> Branding Control
+                        </h2>
+                        <div style={{ 
+                            padding: '1rem', 
+                            borderRadius: '0.75rem', 
+                            background: isPro ? '#f0fdf4' : '#fff7ed',
+                            border: `1px solid ${isPro ? '#10b981' : '#f97316'}`,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div>
+                                <h3 style={{ fontSize: '0.95rem', margin: 0, color: isPro ? '#15803d' : '#9a3412' }}>
+                                    {isPro ? '✓ White-labeling Active' : '⚠ Limited Branding'}
+                                </h3>
+                                <p style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0', opacity: 0.8 }}>
+                                    {isPro 
+                                        ? 'The "Designed by..." attribution is now hidden from your papers.' 
+                                        : 'Upgrade to PRO to remove the "Designed by..." signature from your tests.'}
+                                </p>
+                            </div>
+                            {!isPro && (
+                                <button className="btn btn-sm" style={{ background: '#f97316', color: 'white' }} onClick={() => window.location.href = '/billing'}>
+                                    Upgrade
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                     {/* Security Section */}
