@@ -53,71 +53,80 @@ const CreateTest = () => {
     const { user, profile, isPro, refreshProfile } = useAuth();
     const [step, setStep] = useState(1);
     const [loadingProfile, setLoadingProfile] = useState(true);
+    const [templates, setTemplates] = useState([]);
     const [testData, setTestData] = useState({
         cls: '',
         subject: '',
         chapters: [],
         config: { mcqs: 10, mcqMarks: 1, shortQs: 5, shortQsAttempt: 5, shortQMarks: 2, longQs: 2, longQsAttempt: 2, longQMarks: 5, totalMarks: 50 },
         customQs: [],
-        instituteName: 'My School',
+        instituteName: '',
         testTitle: 'Monthly Assessment - 2026',
         address: '',
         mobile: '',
         logo: null,
-        showWatermark: false
+        showWatermark: false,
+        theme: 'classic', // classic, modern, compact
+        urduFont: 'nastaliq' // nastaliq, regular
     });
 
     const [isSaved, setIsSaved] = useState(false);
     const isLimitReached = !isPro && profile && profile.tests_count >= profile.max_tests;
 
-    // Fetch profile data from Supabase and LocalSettings
+    const [cloudBank, setCloudBank] = useState({});
+
+    // Fetch profile data and templates from Supabase
     useEffect(() => {
-        const fetchProfile = async () => {
-            const local = JSON.parse(localStorage.getItem('appSettings')) || {};
-            if (local.defaultInstitute === 'My School') local.defaultInstitute = '';
-            
-            let baseInstitute = local.defaultInstitute;
-            
+        const loadInitialData = async () => {
             if (!user) {
                 setLoadingProfile(false);
-            } else {
-                try {
-                    const { data, error } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', user.id)
-                        .single();
-
-                    if (!baseInstitute) {
-                        if (data && data.institute_name) {
-                            baseInstitute = data.institute_name;
-                        } else if (user.user_metadata?.institute_name) {
-                            baseInstitute = user.user_metadata.institute_name;
-                        }
-                    }
-                } catch (err) {
-                    console.error('Error fetching profile:', err);
-                    if (!baseInstitute && user.user_metadata?.institute_name) {
-                        baseInstitute = user.user_metadata.institute_name;
-                    }
-                } finally {
-                    setLoadingProfile(false);
-                }
+                return;
             }
+            try {
+                // Load templates
+                const { data: templateData } = await supabase
+                    .from('test_templates')
+                    .select('*')
+                    .eq('user_id', user.id);
+                if (templateData) setTemplates(templateData);
 
-            // Set final synthesized state once safely
-            setTestData(prev => ({
-                ...prev,
-                instituteName: baseInstitute || 'Institute Name',
-                testTitle: local.defaultTestTitle || 'Monthly Assessment - 2026',
-                address: local.address || '',
-                mobile: local.mobile || '',
-                logo: local.logo || null
-            }));
+                // Load custom question bank for the generator
+                const { data: qsData } = await supabase
+                    .from('custom_questions')
+                    .select('*')
+                    .eq('user_id', user.id);
+                
+                if (qsData) {
+                    const structured = {};
+                    qsData.forEach(q => {
+                        const key = `${q.class}_${q.subject}`;
+                        if (!structured[key]) structured[key] = {};
+                        if (!structured[key][q.chapter]) structured[key][q.chapter] = {};
+                        if (!structured[key][q.chapter][q.type]) structured[key][q.chapter][q.type] = [];
+                        structured[key][q.chapter][q.type].push(q.data);
+                    });
+                    setCloudBank(structured);
+                }
+
+                // Setup profile-based defaults
+                setTestData(prev => ({
+                    ...prev,
+                    instituteName: profile?.institute_name || prev.instituteName,
+                    address: profile?.address || prev.address,
+                    mobile: profile?.mobile || prev.mobile,
+                    logo: profile?.institute_logo_url || prev.logo
+                }));
+            } catch (err) {
+                console.error('Initial data load error:', err);
+            } finally {
+                setLoadingProfile(false);
+            }
         };
 
-        fetchProfile();
-    }, [user]);
+        if (profile) {
+            loadInitialData();
+        }
+    }, [user, profile]);
 
     const [expandedChapters, setExpandedChapters] = useState([]); // State for expanded chapter IDs
 
@@ -252,25 +261,73 @@ const CreateTest = () => {
     };
 
     const handleSave = async () => {
-        const existingTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
-        const newTest = {
-            ...testData,
-            id: Date.now().toString(),
-            dateCreated: new Date().toISOString()
-        };
-        
-        // Save to local storage (for now)
-        localStorage.setItem('savedTests', JSON.stringify([newTest, ...existingTests]));
-        
-        // Increment count in Supabase
-        if (user) {
-            await supabase.rpc('increment_test_count', { row_id: user.id });
-            await refreshProfile();
+        if (!user) {
+            alert('Please login to save your test to the cloud.');
+            return;
         }
 
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 3000);
+        try {
+            const { data, error } = await supabase.from('saved_tests').insert({
+                user_id: user.id,
+                test_title: testData.testTitle,
+                cls: testData.cls,
+                subject: testData.subject,
+                config: testData.config,
+                test_data: testData
+            }).select();
+
+            if (error) throw error;
+            
+            // Increment count in Supabase Profile
+            await supabase.rpc('increment_test_count', { row_id: user.id });
+            await refreshProfile();
+
+            setIsSaved(true);
+            setTimeout(() => setIsSaved(false), 3000);
+        } catch (err) {
+            console.error('Cloud save error:', err);
+            alert('Failed to save to cloud. Check your connection.');
+        }
     };
+
+    const handleSaveTemplate = async () => {
+        if (!user) return;
+        const name = window.prompt('Enter a name for this template:', `${getClassName(testData.cls)} ${getSubjectName(testData.cls, testData.subject)} Template`);
+        if (!name) return;
+
+        try {
+            const { error } = await supabase.from('test_templates').insert({
+                user_id: user.id,
+                name,
+                cls: testData.cls,
+                subject: testData.subject,
+                config: testData.config,
+                chapters: testData.chapters
+            });
+            if (error) throw error;
+            alert('Template saved successfully!');
+            
+            // Refresh templates list
+            const { data } = await supabase.from('test_templates').select('*').eq('user_id', user.id);
+            if (data) setTemplates(data);
+        } catch (err) {
+            console.error('Template save error:', err);
+        }
+    };
+
+    const handleLoadTemplate = (template) => {
+        setTestData(prev => ({
+            ...prev,
+            cls: template.cls,
+            subject: template.subject,
+            config: template.config,
+            chapters: template.chapters
+        }));
+        setStep(2); // Jump to chapters to confirm
+    };
+
+    const getClassName = (id) => CLASSES.find(c => c.id === id)?.name || id;
+    const getSubjectName = (clsId, subId) => SUBJECTS[clsId]?.find(s => s.id === subId)?.name || subId;
 
     return (
         <div className="glass create-test-container">
@@ -284,7 +341,26 @@ const CreateTest = () => {
             <div className="wizard-content">
                 {step === 1 && (
                     <div className="wizard-step fade-in">
-                        <h2>Select Class</h2>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h2>Select Class</h2>
+                            {templates.length > 0 && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--primary-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)' }}>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--primary-color)' }}>LOAD TEMPLATE:</span>
+                                    <select 
+                                        className="form-input" 
+                                        style={{ width: 'auto', minWidth: '200px', fontSize: '0.85rem', height: '35px', padding: '0 1rem' }}
+                                        onChange={(e) => {
+                                            const t = templates.find(temp => temp.id === e.target.value);
+                                            if (t) handleLoadTemplate(t);
+                                        }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>-- Choose Template --</option>
+                                        {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    </select>
+                                </div>
+                            )}
+                        </div>
                         <div className="options-grid">
                             {CLASSES.map(cls => (
                                 <div
@@ -372,15 +448,65 @@ const CreateTest = () => {
 
                 {step === 3 && (
                     <div className="wizard-step fade-in">
-                        <h2>Test Configuration</h2>
-                        <p className="text-muted" style={{ marginBottom: '1.5rem' }}>Set up the structure and branding of the exam.</p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <div>
+                                <h2>Test Configuration</h2>
+                                <p className="text-muted">Set up the structure and branding of the exam.</p>
+                            </div>
+                            <button className="btn btn-secondary" onClick={handleSaveTemplate} style={{ color: 'var(--primary-color)', fontWeight: '700' }}>
+                                <Save size={16} /> SAVE AS TEMPLATE
+                            </button>
+                        </div>
 
                         <div className="config-form">
+                            {/* Layout & Style Theme Selector */}
+                            <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2rem', border: '2px solid var(--primary-color)' }}>
+                                <h3 style={{ fontSize: '1rem', margin: '0 0 1.25rem 0', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Edit2 size={18} /> Paper Theme & Styling
+                                </h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                    <div className="form-group">
+                                        <label style={{ fontWeight: '700' }}>Paper Theme</label>
+                                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                                            {['classic', 'modern', 'compact'].map(t => (
+                                                <button 
+                                                    key={t}
+                                                    className={`btn ${testData.theme === t ? 'btn-primary' : 'btn-secondary'}`}
+                                                    style={{ flex: 1, textTransform: 'capitalize', fontSize: '0.8rem', padding: '0.6rem' }}
+                                                    onClick={() => updateData('theme', t)}
+                                                >
+                                                    {t}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label style={{ fontWeight: '700' }}>Urdu Font Style</label>
+                                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                                            <button 
+                                                className={`btn ${testData.urduFont === 'nastaliq' ? 'btn-primary' : 'btn-secondary'}`}
+                                                style={{ flex: 1, fontSize: '0.8rem', padding: '0.6rem' }}
+                                                onClick={() => updateData('urduFont', 'nastaliq')}
+                                            >
+                                                Nastaliq (Best)
+                                            </button>
+                                            <button 
+                                                className={`btn ${testData.urduFont === 'regular' ? 'btn-primary' : 'btn-secondary'}`}
+                                                style={{ flex: 1, fontSize: '0.8rem', padding: '0.6rem' }}
+                                                onClick={() => updateData('urduFont', 'regular')}
+                                            >
+                                                Standard
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Simplified Header for SaaS */}
                             <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2rem', border: '1px solid var(--primary-light)' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                                     <h3 style={{ fontSize: '1rem', margin: 0, color: 'var(--primary-color)' }}>Institute Details</h3>
-                                    <span className="badge" style={{ fontSize: '0.7rem', background: 'var(--primary-light)', color: 'var(--primary-color)' }}>AUTO-FILLED FROM PROFILE</span>
+                                    <span className="badge" style={{ fontSize: '0.7rem', background: 'var(--primary-light)', color: 'var(--primary-color)' }}>AUTO-SYNCED TO CLOUD</span>
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                                     <div className="form-group">
@@ -415,16 +541,16 @@ const CreateTest = () => {
                                     <h4 style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-dark)' }}>Branding</h4>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                                         <div className="form-group">
-                                            <label style={{ fontSize: '0.8rem' }}>Upload Institute Logo</label>
+                                            <label style={{ fontSize: '0.8rem' }}>Update Institute Logo</label>
                                             <input type="file" accept="image/*" className="form-input" style={{ fontSize: '0.9rem', padding: '0.5rem' }} onChange={handleLogoUpload} />
                                             <p style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.7 }}>Recommended: PNG with transparent background.</p>
                                         </div>
-                                        <div className="form-group" style={{ justifyContent: 'center' }}>
+                                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: !isPro ? 'not-allowed' : 'pointer', fontSize: '0.9rem', opacity: !isPro ? 0.7 : 1 }}>
                                                 <input type="checkbox" disabled={!isPro} checked={testData.showWatermark} onChange={(e) => updateData('showWatermark', e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--primary-color)' }} />
                                                 <span>
-                                                    Show Logo as Watermark in PDF 
-                                                    {!isPro && <span style={{ fontSize: '0.65rem', background: '#fca5a5', color: '#7f1d1d', padding: '0.15rem 0.4rem', borderRadius: '4px', marginLeft: '0.5rem', fontWeight: 'bold' }}>PRO ONLY</span>}
+                                                    Show Logo as Watermark 
+                                                    {!isPro && <span style={{ fontSize: '0.65rem', background: '#fca5a5', color: '#7f1d1d', padding: '0.15rem 0.4rem', borderRadius: '4px', marginLeft: '0.5rem', fontWeight: 'bold' }}>PRO</span>}
                                                 </span>
                                             </label>
                                         </div>
@@ -554,7 +680,7 @@ const CreateTest = () => {
 
                 {step === 4 && (
                     <div className="wizard-step fade-in" id="printable-area">
-                        <div className="paper-container">
+                        <div className={`paper-container theme-${testData.theme} font-${testData.urduFont}`}>
                             {testData.showWatermark && testData.logo && (
                                 <img src={testData.logo} alt="" className="watermark-bg" />
                             )}
@@ -578,7 +704,7 @@ const CreateTest = () => {
                                     <div><strong>Class:</strong> {CLASSES.find(c => c.id === testData.cls)?.name || ''}</div>
                                     <div><strong>Subject:</strong> {SUBJECTS[testData.cls]?.find(s => s.id === testData.subject)?.name || ''}</div>
                                     <div><strong>Total Marks:</strong> {actualTotalMarks}</div>
-                                    <div><strong>Time Allowed:</strong> 2 Hours</div>
+                                    <div><strong>Time:</strong> 2 Hours</div>
                                 </div>
 
                                 <div className="student-details">
@@ -608,7 +734,7 @@ const CreateTest = () => {
 
                                         <div className="mcq-list">
                                             {Array.from({ length: testData.config.mcqs }).map((_, i) => {
-                                                const q = generateMockQuestion('mcq', testData.cls, testData.subject, testData.chapters, i);
+                                                const q = generateMockQuestion('mcq', testData.cls, testData.subject, testData.chapters, i, cloudBank);
                                                 return (
                                                     <div key={i} className="dual-mcq-item">
                                                         <div className="mcq-question-row">
@@ -620,7 +746,7 @@ const CreateTest = () => {
                                                                 <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                                     <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                                     {q.urOptions?.[optIndex] && (
-                                                                        <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                        <span className="ur" style={{ fontSize: '1.25rem', direction: 'rtl' }}>
                                                                             {q.urOptions[optIndex]}
                                                                         </span>
                                                                     )}
@@ -641,7 +767,7 @@ const CreateTest = () => {
                                                             <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                                 <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                                 {q.urOptions?.[optIndex] && (
-                                                                    <span style={{ fontFamily: "'Jameel Noori Nastaliq', 'Jameel Noori Nastaleeq', Arial, sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                    <span className="ur" style={{ fontSize: '1.25rem', direction: 'rtl' }}>
                                                                         {q.urOptions[optIndex]}
                                                                     </span>
                                                                 )}
@@ -671,20 +797,20 @@ const CreateTest = () => {
                                                     <p className="ur"><strong>سوال 2: کوئی سے {testData.config.shortQsAttempt || testData.config.shortQs} مختصر جوابات لکھیں۔ ({(testData.config.shortQsAttempt || testData.config.shortQs) * (testData.config.shortQMarks || 2)} نمبر)</strong></p>
                                                 </div>
 
-                                                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                                <div className="questions-container" style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                                     {Array.from({ length: testData.config.shortQs }).map((_, i) => {
-                                                        const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i);
+                                                        const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i, cloudBank);
                                                         return (
                                                             <div key={i} className="dual-subjective-q">
                                                                 <div className="en">({i + 1}) <Latex>{q.en}</Latex></div>
-                                                                <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
+                                                                <div className="ur" style={{ direction: 'rtl' }}>{q.ur} ({i + 1})</div>
                                                             </div>
                                                         )
                                                     })}
                                                     {testData.customQs.filter(q => q.type === 'short').map((q, i) => (
                                                         <div key={q.id} className="dual-subjective-q">
                                                             <div className="en">({testData.config.shortQs + i + 1}) <Latex>{q.en || "Custom Short Question"}</Latex></div>
-                                                            <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Arial', sans-serif", fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
+                                                            <div className="ur" style={{ direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -700,21 +826,21 @@ const CreateTest = () => {
 
                                                 <div style={{ marginTop: '1.5rem' }}>
                                                     {Array.from({ length: testData.config.longQs }).map((_, i) => {
-                                                        const qA = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2);
-                                                        const qB = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2 + 1);
+                                                        const qA = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2, cloudBank);
+                                                        const qB = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2 + 1, cloudBank);
                                                         return (
                                                             <div key={i} style={{ marginBottom: '1.5rem' }}>
                                                                 <div className="dual-subjective-q">
                                                                     <strong className="en" style={{ minWidth: '40px' }}>Q{i + 3}:</strong>
-                                                                    <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
+                                                                    <strong className="ur" style={{ minWidth: '40px', direction: 'rtl' }}>سوال {i + 3}:</strong>
                                                                 </div>
                                                                 <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                                     <div className="en">(a) <Latex>{qA.en}</Latex></div>
-                                                                    <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
+                                                                    <div className="ur" style={{ direction: 'rtl' }}>{qA.ur} (a)</div>
                                                                 </div>
                                                                 <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
                                                                     <div className="en">(b) <Latex>{qB.en}</Latex></div>
-                                                                    <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
+                                                                    <div className="ur" style={{ direction: 'rtl' }}>{qB.ur} (b)</div>
                                                                 </div>
                                                             </div>
                                                         )
@@ -723,11 +849,11 @@ const CreateTest = () => {
                                                         <div key={q.id} style={{ marginBottom: '1.5rem' }}>
                                                             <div className="dual-subjective-q">
                                                                 <strong className="en" style={{ minWidth: '40px' }}>Q{testData.config.longQs + i + 3}:</strong>
-                                                                <strong className="ur" style={{ minWidth: '40px', fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
+                                                                <strong className="ur" style={{ minWidth: '40px', direction: 'rtl' }}>سوال {testData.config.longQs + i + 3}:</strong>
                                                             </div>
                                                             <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                                 <div className="en"><Latex>{q.en || "Custom Long Question"}</Latex></div>
-                                                                <div className="ur" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Arial', sans-serif", direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
+                                                                <div className="ur" style={{ direction: 'rtl' }}>{q.ur || "کسٹم طویل سوال"}</div>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -738,7 +864,7 @@ const CreateTest = () => {
                                 )}
                             </div>
                             <div className="paper-footer" style={{ marginTop: '30px', textAlign: 'center', fontSize: '12px', color: '#555', borderTop: '1px dashed #ccc', paddingTop: '10px' }}>
-                                Designed by Muhammad Akmal Bashir
+                                Designed by Muhammad Akmal Bashir | Smart Test Generator
                             </div>
                         </div>
                     </div>

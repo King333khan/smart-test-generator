@@ -104,23 +104,26 @@ const urduTemplatesLong = [
     "{topic} کی جامع وضاحت پیش کریں۔"
 ];
 
-export const generateMockQuestion = (type, cls, subject, selectedChapterIds, index) => {
+export const generateMockQuestion = (type, cls, subject, selectedChapterIds, index, cloudBank = null) => {
     const clsSubj = `${cls}_${subject}`;
 
     // Pool all available real questions for the selected chapters
     let realQuestions = [];
 
-    // Custom from UI
-    try {
-        const customBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
-        if (customBank[clsSubj]) {
-            selectedChapterIds.forEach(chId => {
-                if (customBank[clsSubj][chId] && customBank[clsSubj][chId][type]) {
-                    realQuestions.push(...customBank[clsSubj][chId][type]);
-                }
-            });
-        }
-    } catch (e) { }
+    // Use cloudBank if provided, otherwise try localStorage fallback
+    const bankSource = cloudBank || (() => {
+        try {
+            return JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+        } catch (e) { return {}; }
+    })();
+
+    if (bankSource[clsSubj]) {
+        selectedChapterIds.forEach(chId => {
+            if (bankSource[clsSubj][chId] && bankSource[clsSubj][chId][type]) {
+                realQuestions.push(...bankSource[clsSubj][chId][type]);
+            }
+        });
+    }
 
     // Hardcoded from file
     if (QUESTION_BANK[clsSubj]) {

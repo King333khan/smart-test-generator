@@ -14,78 +14,87 @@ const Dashboard = () => {
     });
 
     useEffect(() => {
-        let saved = [];
-        try {
-            saved = JSON.parse(localStorage.getItem('savedTests') || '[]');
-            if (!Array.isArray(saved)) saved = [];
-        } catch (e) {
-            console.error('Error parsing saved tests:', e);
-            saved = [];
-        }
+        const fetchStats = async () => {
+            if (!profile) return;
+            
+            try {
+                // Fetch tests for stats calculation
+                const { data: saved, error } = await supabase
+                    .from('saved_tests')
+                    .select('id, test_title, cls, subject, created_at')
+                    .order('created_at', { ascending: false });
 
-        const now = new Date();
-        const todayStr = now.toDateString();
+                if (error) throw error;
 
-        let testsToday = 0;
-        let subjectCounts = {};
+                const now = new Date();
+                const todayStr = now.toDateString();
 
-        saved.forEach(test => {
-            const date = new Date(test.dateCreated);
-            if (date.toDateString() === todayStr) {
-                testsToday++;
+                let testsToday = 0;
+                let subjectCounts = {};
+                let classStats = {};
+                let totalClassTests = 0;
+
+                saved.forEach(test => {
+                    const date = new Date(test.created_at);
+                    if (date.toDateString() === todayStr) {
+                        testsToday++;
+                    }
+
+                    const subjKey = `${test.cls}_${test.subject}`;
+                    subjectCounts[subjKey] = (subjectCounts[subjKey] || 0) + 1;
+
+                    if (test.cls) {
+                        classStats[test.cls] = (classStats[test.cls] || 0) + 1;
+                        totalClassTests++;
+                    }
+                });
+
+                let mostPopularSubjKey = null;
+                let maxCount = 0;
+                for (const [key, count] of Object.entries(subjectCounts)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        mostPopularSubjKey = key;
+                    }
+                }
+
+                const classDistribution = Object.keys(classStats).map(clsId => {
+                    const percentage = totalClassTests > 0 ? Math.round((classStats[clsId] / totalClassTests) * 100) : 0;
+                    return {
+                        id: clsId,
+                        name: CLASSES.find(c => c.id === clsId)?.name || clsId,
+                        count: classStats[clsId],
+                        percentage
+                    };
+                }).sort((a, b) => b.count - a.count);
+
+                let popularSubjectName = 'N/A';
+                if (mostPopularSubjKey) {
+                    const [clsId, subId] = mostPopularSubjKey.split('_');
+                    const subName = SUBJECTS[clsId]?.find(s => s.id === subId)?.name || '';
+                    if (subName) {
+                        popularSubjectName = `${subName} (${CLASSES.find(c => c.id === clsId)?.name || ''})`;
+                    }
+                }
+
+                setStats({
+                    testsToday,
+                    totalTests: saved.length,
+                    popularSubject: popularSubjectName,
+                    classDistribution,
+                    recentActivity: saved.slice(0, 5).map(t => ({
+                        ...t,
+                        testTitle: t.test_title,
+                        dateCreated: t.created_at
+                    }))
+                });
+            } catch (err) {
+                console.error('Error fetching dashboard stats:', err);
             }
+        };
 
-            const subjKey = `${test.cls}_${test.subject}`;
-            subjectCounts[subjKey] = (subjectCounts[subjKey] || 0) + 1;
-        });
-
-        let mostPopularSubjKey = null;
-        let maxCount = 0;
-        for (const [key, count] of Object.entries(subjectCounts)) {
-            if (count > maxCount) {
-                maxCount = count;
-                mostPopularSubjKey = key;
-            }
-        }
-
-        // Calculate distribution by class
-        const classStats = {};
-        let totalClassTests = 0;
-        saved.forEach(test => {
-            if (test.cls) {
-                classStats[test.cls] = (classStats[test.cls] || 0) + 1;
-                totalClassTests++;
-            }
-        });
-
-        const classDistribution = Object.keys(classStats).map(clsId => {
-            const percentage = totalClassTests > 0 ? Math.round((classStats[clsId] / totalClassTests) * 100) : 0;
-            return {
-                id: clsId,
-                name: CLASSES.find(c => c.id === clsId)?.name || clsId,
-                count: classStats[clsId],
-                percentage
-            };
-        }).sort((a, b) => b.count - a.count);
-
-        let popularSubjectName = 'N/A';
-        if (mostPopularSubjKey) {
-            const [clsId, subId] = mostPopularSubjKey.split('_');
-            const clsName = CLASSES.find(c => c.id === clsId)?.name || '';
-            const subName = SUBJECTS[clsId]?.find(s => s.id === subId)?.name || '';
-            if (clsName && subName) {
-                popularSubjectName = `${subName} (${clsName})`;
-            }
-        }
-
-        setStats({
-            testsToday,
-            totalTests: saved.length,
-            popularSubject: popularSubjectName,
-            classDistribution,
-            recentActivity: saved.slice(0, 5) // Top 5 newest
-        });
-    }, []);
+        fetchStats();
+    }, [profile]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };

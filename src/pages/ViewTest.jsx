@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download, Files, FileDown } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Type, Minus, Plus, LayoutTemplate, SplitSquareHorizontal, FileEdit, Download, Files, FileDown, Loader2, Cloud } from 'lucide-react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
 import { generateMockQuestion } from '../utils/questionGenerator';
+import { supabase } from '../utils/supabaseClient';
+import { useAuth } from '../utils/AuthContext';
 import Latex from 'react-latex-next';
 import html2pdf from 'html2pdf.js';
 import './CreateTest.css';
@@ -10,8 +12,10 @@ import './CreateTest.css';
 const ViewTest = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const paperRef = useRef(null);
     const [testData, setTestData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
 
     // Advanced Paper Settings
@@ -25,23 +29,70 @@ const ViewTest = () => {
     });
 
     useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem('savedTests') || '[]');
-        const test = saved.find(t => t.id === id);
-        if (test) {
-            setTestData(test);
+        const fetchData = async () => {
+            if (!user) return;
+            setLoading(true);
+            try {
+                // 1. Fetch the Test
+                const { data, error } = await supabase
+                    .from('saved_tests')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+                if (data) {
+                    setTestData({
+                        id: data.id,
+                        ...data.test_data
+                    });
+                }
+
+                // 2. Fetch Questions from Cloud Bank (to use in generator)
+                const { data: qsData } = await supabase
+                    .from('custom_questions')
+                    .select('*')
+                    .eq('user_id', user.id);
+                
+                if (qsData) {
+                    const structured = {};
+                    qsData.forEach(q => {
+                        const key = `${q.class}_${q.subject}`;
+                        if (!structured[key]) structured[key] = {};
+                        if (!structured[key][q.chapter]) structured[key][q.chapter] = {};
+                        if (!structured[key][q.chapter][q.type]) structured[key][q.chapter][q.type] = [];
+                        structured[key][q.chapter][q.type].push(q.data);
+                    });
+                    setCloudBank(structured);
+                }
+            } catch (err) {
+                console.error('Fetch test/bank error:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id, user]);
+
+    const handleSave = async () => {
+        if (!testData || !user) return;
+        try {
+            const { error } = await supabase
+                .from('saved_tests')
+                .update({
+                    test_data: testData,
+                    test_title: testData.testTitle
+                })
+                .eq('id', id);
+
+            if (error) throw error;
+            setIsSaved(true);
+            setTimeout(() => setIsSaved(false), 3000);
+        } catch (err) {
+            console.error('Cloud update error:', err);
+            alert('Failed to save changes to cloud.');
         }
-    }, [id]);
-
-    const handleSave = () => {
-        // If they editing manually, we should ideally extract innerHTML, but for now 
-        // we just save the current testData overrides
-        if (!testData) return;
-        const saved = JSON.parse(localStorage.getItem('savedTests') || '[]');
-        const updatedTests = saved.map(t => t.id === testData.id ? testData : t);
-        localStorage.setItem('savedTests', JSON.stringify(updatedTests));
-
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 3000);
     };
 
     const handleDataChange = (field, value) => {
@@ -150,6 +201,13 @@ const ViewTest = () => {
         });
     };
 
+    if (loading) return (
+        <div className="glass" style={{ padding: '10rem 2rem', textAlign: 'center', minHeight: 'calc(100vh - 4rem)' }}>
+            <Loader2 size={64} className="spin" style={{ color: 'var(--primary-color)', margin: '0 auto', opacity: 0.5 }} />
+            <p className="text-muted" style={{ marginTop: '1.5rem', fontSize: '1.1rem' }}>Restoring paper from cloud...</p>
+        </div>
+    );
+
     if (!testData) return (
         <div className="glass" style={{ padding: '2rem', textAlign: 'center', minHeight: 'calc(100vh - 4rem)' }}>
             <h2>Test not found or could not be loaded.</h2>
@@ -178,11 +236,14 @@ const ViewTest = () => {
                         <button className="btn btn-secondary" onClick={() => navigate('/saved')}>
                             <ArrowLeft size={16} /> Back
                         </button>
-                        <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Advanced Toolbar</h3>
+                        <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Archive Viewer</h3>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500', fontSize: '0.9rem' }}>✓ Saved changes</span>}
+                        <span className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginRight: '1rem', fontSize: '0.8rem' }}>
+                            <Cloud size={14} /> Cloud Active
+                        </span>
+                        {isSaved && <span className="text-muted fade-in" style={{ color: '#10b981', fontWeight: '500', fontSize: '0.9rem' }}>✓ Cloud Synced</span>}
                         <button className="btn btn-secondary" onClick={handleSave}>
                             <Save size={16} /> Save Edits
                         </button>
@@ -191,9 +252,6 @@ const ViewTest = () => {
                         </button>
                         <button className="btn btn-secondary" onClick={handleExportPDF} style={{ color: '#0ea5e9', borderColor: '#bae6fd' }}>
                             <FileDown size={16} /> Download PDF
-                        </button>
-                        <button className="btn btn-secondary" onClick={() => toggleSetting('pageBreak')} style={{ background: settings.pageBreak ? 'var(--primary-color)' : '', color: settings.pageBreak ? 'white' : '', borderColor: settings.pageBreak ? 'var(--primary-color)' : '' }}>
-                            <Files size={16} /> {settings.pageBreak ? 'Pages' : 'Continuous'}
                         </button>
                         <button className="btn" onClick={() => window.print()}>
                             <Printer size={16} /> Print
@@ -205,7 +263,7 @@ const ViewTest = () => {
                     {/* Line Height Control */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
                         <Type size={16} className="text-muted" />
-                        <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Line Spacing</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Spacing</span>
                         <button className="btn btn-secondary" style={{ padding: '0.25rem' }} onClick={() => changeLineHeight(-0.1)}><Minus size={14} /></button>
                         <span style={{ fontSize: '0.9rem', width: '30px', textAlign: 'center' }}>{settings.lineHeight.toFixed(1)}</span>
                         <button className="btn btn-secondary" style={{ padding: '0.25rem' }} onClick={() => changeLineHeight(0.1)}><Plus size={14} /></button>
@@ -229,12 +287,12 @@ const ViewTest = () => {
 
                     {/* Manual Editing Toggle */}
                     <button className="btn btn-secondary" onClick={() => toggleSetting('isEditing')} style={{ background: settings.isEditing ? 'var(--primary-color)' : '', color: settings.isEditing ? 'white' : '' }}>
-                        <FileEdit size={16} /> {settings.isEditing ? 'Finish Edit' : 'Manual Edit'}
+                        <FileEdit size={16} /> {settings.isEditing ? 'Finish Edit' : 'Edit Mode'}
                     </button>
                 </div>
             </div>
 
-            <div className="paper-container" style={{ margin: 0, lineHeight: settings.lineHeight }} ref={paperRef}>
+            <div className={`paper-container theme-${testData.theme || 'classic'} font-${testData.urduFont || 'nastaliq'}`} style={{ margin: 0, lineHeight: settings.lineHeight }} ref={paperRef}>
                 {/* Editable Wrapper */}
                 <div contentEditable={settings.isEditing} suppressContentEditableWarning={true} style={{ outline: settings.isEditing ? '2px dashed #cbd5e1' : 'none', padding: settings.isEditing ? '1rem' : '0', transition: 'all 0.2s' }}>
 
@@ -277,7 +335,7 @@ const ViewTest = () => {
                             }}>
                                 <div><strong>Class:</strong> {CLASSES.find(c => c.id === testData.cls)?.name || ''}</div>
                                 <div><strong>Subject:</strong> {SUBJECTS[testData.cls]?.find(s => s.id === testData.subject)?.name || ''}</div>
-                                <div><strong>Marks:</strong> {testData.config.totalMarks}</div>
+                                <div><strong>Marks:</strong> {testData.config?.totalMarks || 0}</div>
                                 {settings.headerStyle !== 'compact' && <div><strong>Time:</strong> 2 Hours</div>}
                             </div>
 
@@ -296,7 +354,7 @@ const ViewTest = () => {
 
                     <div className="paper-body">
                         {/* Objective Part */}
-                        {testData.config.mcqs > 0 && (
+                        {testData.config?.mcqs > 0 && (
                             <div className="question-section">
                                 <div className="dual-lang-header">
                                     <h3 className="en">PART I - OBJECTIVE (MCQs)</h3>
@@ -314,7 +372,7 @@ const ViewTest = () => {
 
                                 <div className="mcq-list">
                                     {Array.from({ length: testData.config.mcqs }).map((_, i) => {
-                                        const q = generateMockQuestion('mcq', testData.cls, testData.subject, testData.chapters, i);
+                                        const q = generateMockQuestion('mcq', testData.cls, testData.subject, testData.chapters, i, cloudBank);
                                         return (
                                             <div key={i} className="dual-mcq-item" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '1rem' : '0' }}>
                                                 <div className="mcq-question-row">
@@ -326,7 +384,7 @@ const ViewTest = () => {
                                                         <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                             <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                             {q.urOptions?.[optIndex] && (
-                                                                <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
+                                                                <span className="ur" style={{ fontSize: '1.25rem', direction: 'rtl' }}>
                                                                     {q.urOptions[optIndex]}
                                                                 </span>
                                                             )}
@@ -347,7 +405,7 @@ const ViewTest = () => {
                                                     <div key={optIndex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                                                         <span>({String.fromCharCode(65 + optIndex)}) <Latex>{q.options?.[optIndex] || `Option ${optIndex + 1}`}</Latex></span>
                                                         {q.urOptions?.[optIndex] && (
-                                                            <span style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>
+                                                            <span className="ur" style={{ fontSize: '1.25rem', direction: 'rtl' }}>
                                                                 {q.urOptions[optIndex]}
                                                             </span>
                                                         )}
@@ -363,7 +421,7 @@ const ViewTest = () => {
                         {/* Subjective Part */}
                         <div style={{ pageBreakBefore: settings.pageBreak ? 'always' : 'auto', marginTop: '20px' }}></div>
 
-                        {(testData.config.shortQs > 0 || testData.config.longQs > 0) && (
+                        {(testData.config?.shortQs > 0 || testData.config?.longQs > 0) && (
                             <div className="question-section">
                                 <div className="dual-lang-header" style={{ borderBottom: '2px solid black', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
                                     <h3 className="en">PART II - SUBJECTIVE</h3>
@@ -377,20 +435,20 @@ const ViewTest = () => {
                                             <p className="ur"><strong>سوال 2: کوئی سے {testData.config.shortQsAttempt || testData.config.shortQs} مختصر جوابات لکھیں۔ ({(testData.config.shortQsAttempt || testData.config.shortQs) * (testData.config.shortQMarks || 2)} نمبر)</strong></p>
                                         </div>
 
-                                        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        <div className="questions-container" style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                             {Array.from({ length: testData.config.shortQs }).map((_, i) => {
-                                                const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i);
+                                                const q = generateMockQuestion('short', testData.cls, testData.subject, testData.chapters, i, cloudBank);
                                                 return (
                                                     <div key={i} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
                                                         <div className="en">({i + 1}) <Latex>{q.en}</Latex></div>
-                                                        <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur} ({i + 1})</div>
+                                                        <div className="ur" style={{ direction: 'rtl' }}>{q.ur} ({i + 1})</div>
                                                     </div>
                                                 )
                                             })}
                                             {testData.customQs?.filter(q => q.type === 'short').map((q, i) => (
                                                 <div key={q.id} className="dual-subjective-q" style={{ borderBottom: settings.showDividers ? '1px solid #eee' : 'none', paddingBottom: settings.showDividers ? '0.75rem' : '0' }}>
                                                     <div className="en">({testData.config.shortQs + i + 1}) <Latex>{q.en || "Custom Short Question"}</Latex></div>
-                                                    <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", "Nafees Web Naskh", Arial, sans-serif', fontSize: '1.25rem', direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
+                                                    <div className="ur" style={{ direction: 'rtl' }}>{q.ur || "کسٹم مختصر سوال"} ({testData.config.shortQs + i + 1})</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -406,21 +464,21 @@ const ViewTest = () => {
 
                                         <div style={{ marginTop: '1.5rem' }}>
                                             {Array.from({ length: testData.config.longQs }).map((_, i) => {
-                                                const qA = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2);
-                                                const qB = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2 + 1);
+                                                const qA = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2, cloudBank);
+                                                const qB = generateMockQuestion('long', testData.cls, testData.subject, testData.chapters, i * 2 + 1, cloudBank);
                                                 return (
                                                     <div key={i} style={{ marginBottom: '1.5rem', borderBottom: settings.showDividers ? '1px solid #ccc' : 'none', paddingBottom: settings.showDividers ? '1.5rem' : '0' }}>
                                                         <div className="dual-subjective-q">
                                                             <strong className="en" style={{ minWidth: '40px' }}>Q{i + 3}:</strong>
-                                                            <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {i + 3}:</strong>
+                                                            <strong className="ur" style={{ minWidth: '40px', direction: 'rtl' }}>سوال {i + 3}:</strong>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                             <div className="en">(a) <Latex>{qA.en}</Latex></div>
-                                                            <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qA.ur} (a)</div>
+                                                            <div className="ur" style={{ direction: 'rtl' }}>{qA.ur} (a)</div>
                                                         </div>
                                                         <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem', marginTop: '0.5rem' }}>
                                                             <div className="en">(b) <Latex>{qB.en}</Latex></div>
-                                                            <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{qB.ur} (b)</div>
+                                                            <div className="ur" style={{ direction: 'rtl' }}>{qB.ur} (b)</div>
                                                         </div>
                                                     </div>
                                                 )
@@ -429,11 +487,11 @@ const ViewTest = () => {
                                                 <div key={q.id} style={{ marginBottom: '1.5rem', borderBottom: settings.showDividers ? '1px solid #ccc' : 'none', paddingBottom: settings.showDividers ? '1.5rem' : '0' }}>
                                                     <div className="dual-subjective-q">
                                                         <strong className="en" style={{ minWidth: '40px' }}>Q{testData.config.longQs + i + 3}:</strong>
-                                                        <strong className="ur" style={{ minWidth: '40px', fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>سوال {testData.config.longQs + i + 3}:</strong>
+                                                        <strong className="ur" style={{ minWidth: '40px', direction: 'rtl' }}>سوال {testData.config.longQs + i + 3}:</strong>
                                                     </div>
                                                     <div className="dual-subjective-q" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
                                                         <div className="en"><Latex>{q.en || "Custom Long Question"}</Latex></div>
-                                                        <div className="ur" style={{ fontFamily: '"Jameel Noori Nastaleeq", "Jameel Noori Nastaliq", "Noto Nastaliq Urdu", Arial, sans-serif', direction: 'rtl', fontSize: '1.25rem' }}>{q.ur || "کسٹم طویل سوال"}</div>
+                                                        <div className="ur" style={{ direction: 'rtl' }}>{q.ur || "کسٹم طویل سوال"}</div>
                                                     </div>
                                                 </div>
                                             ))}
@@ -444,7 +502,7 @@ const ViewTest = () => {
                         )}
                     </div>
                     <div className="paper-footer" style={{ marginTop: '30px', textAlign: 'center', fontSize: '12px', color: '#555', borderTop: '1px dashed #ccc', paddingTop: '10px' }}>
-                        Designed by Muhammad Akmal Bashir
+                        Designed by Muhammad Akmal Bashir | Smart Test Generator
                     </div>
                 </div>
             </div>

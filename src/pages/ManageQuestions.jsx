@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Library } from 'lucide-react';
+import { Save, Plus, Trash2, Library, Loader2 } from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
+import { supabase } from '../utils/supabaseClient';
+import { useAuth } from '../utils/AuthContext';
 
 const ManageQuestions = () => {
+    const { user } = useAuth();
     const [cls, setCls] = useState('');
     const [subject, setSubject] = useState('');
     const [chapter, setChapter] = useState('');
@@ -13,68 +16,94 @@ const ManageQuestions = () => {
     const [options, setOptions] = useState(['', '', '', '']);
     const [urOptions, setUrOptions] = useState(['', '', '', '']);
 
-    const [savedCustomQuestions, setSavedCustomQuestions] = useState({});
+    const [savedQuestions, setSavedQuestions] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        let localBank = {};
+    const fetchQuestions = async () => {
+        if (!user || !cls || !subject || !chapter) return;
+        setLoading(true);
         try {
-            const raw = localStorage.getItem('customQuestionBank');
-            if (raw && raw !== 'undefined') {
-                localBank = JSON.parse(raw);
-            }
-        } catch (e) {
-            console.error("Failed to parse local custom banks", e);
+            const { data, error } = await supabase
+                .from('custom_questions')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('class', cls)
+                .eq('subject', subject)
+                .eq('chapter', chapter)
+                .eq('type', type)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setSavedQuestions(data || []);
+        } catch (err) {
+            console.error('Fetch questions error:', err);
+        } finally {
+            setLoading(false);
         }
-        setSavedCustomQuestions(localBank);
-    }, []);
+    };
+
+    useEffect(() => {
+        fetchQuestions();
+    }, [user, cls, subject, chapter, type]);
 
     const handleAutoTranslate = async () => {
         if (!enText) return;
-        // Mock translation for simplicity without external API keys. In a real app, you'd call an API here.
-        // We will just leave it up to the user or provide a basic stub.
-        alert('Auto-translate would connect to a translation API here (e.g. Google Translate). For now, please enter Urdu manually if needed.');
+        alert('Auto-translate feature coming soon! Please enter Urdu manually for now.');
     };
 
-    const handleSave = () => {
-        if (!cls || !subject || !chapter || !enText.trim()) return;
+    const handleSave = async () => {
+        if (!user || !cls || !subject || !chapter || !enText.trim()) return;
 
-        const newQuestion = {
+        const newQuestionData = {
             en: enText.trim(),
             ur: urText.trim(),
             ...(type === 'mcq' && { options: [...options], urOptions: [...urOptions] })
         };
 
-        // Structure creation
-        const clsSubj = `${cls}_${subject}`;
-        const currentBank = { ...savedCustomQuestions };
+        try {
+            const { error } = await supabase.from('custom_questions').insert({
+                user_id: user.id,
+                class: cls,
+                subject: subject,
+                chapter: chapter,
+                type: type,
+                data: newQuestionData
+            });
 
-        if (!currentBank[clsSubj]) currentBank[clsSubj] = {};
-        if (!currentBank[clsSubj][chapter]) currentBank[clsSubj][chapter] = { mcq: [], short: [], long: [] };
+            if (error) throw error;
 
-        // Append
-        currentBank[clsSubj][chapter][type] = [...(currentBank[clsSubj][chapter][type] || []), newQuestion];
-
-        localStorage.setItem('customQuestionBank', JSON.stringify(currentBank));
-        setSavedCustomQuestions(currentBank);
-
-        // Clear input form safely
-        setEnText('');
-        setUrText('');
-        setOptions(['', '', '', '']);
-        setUrOptions(['', '', '', '']);
-
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 3000);
+            setEnText('');
+            setUrText('');
+            setOptions(['', '', '', '']);
+            setUrOptions(['', '', '', '']);
+            setIsSaved(true);
+            fetchQuestions();
+            setTimeout(() => setIsSaved(false), 3000);
+        } catch (err) {
+            console.error('Save question error:', err);
+            alert('Failed to save question. Please try again.');
+        }
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this question?')) return;
+        try {
+            const { error } = await supabase
+                .from('custom_questions')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+            fetchQuestions();
+        } catch (err) {
+            console.error('Delete error:', err);
+        }
+    };
 
-    // Calculate how many questions currently exist in this category
-    const clsSubj = `${cls}_${subject}`;
-    const filteredQuestions = (savedCustomQuestions[clsSubj]?.[chapter]?.[type] || []).filter(q => 
-        q.en.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        (q.ur && q.ur.includes(searchTerm))
+    const filteredQuestions = savedQuestions.filter(q => 
+        q.data.en.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (q.data.ur && q.data.ur.includes(searchTerm))
     );
 
     return (
@@ -237,26 +266,31 @@ const ManageQuestions = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                        {filteredQuestions.length === 0 ? (
+                        {loading ? (
+                            <div style={{ padding: '4rem', textAlign: 'center' }}>
+                                <Loader2 size={48} className="spin" style={{ color: 'var(--primary-color)', margin: '0 auto' }} />
+                                <p style={{ marginTop: '1rem', fontWeight: '600' }}>Fetching from Cloud...</p>
+                            </div>
+                        ) : filteredQuestions.length === 0 ? (
                             <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)', border: '2px dashed var(--border-color)', borderRadius: 'var(--radius-md)', background: 'var(--primary-light)' }}>
                                 <Library size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                                 <p style={{ fontWeight: '600', margin: 0 }}>No questions found matching your criteria.</p>
                             </div>
                         ) : (
-                            filteredQuestions.map((q, idx) => (
-                                <div key={idx} className="glass" style={{ padding: '1.75rem', borderRadius: 'var(--radius-md)', background: 'white' }}>
+                            filteredQuestions.map((q) => (
+                                <div key={q.id} className="glass" style={{ padding: '1.75rem', borderRadius: 'var(--radius-md)', background: 'white' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem' }}>
                                         <div style={{ flex: 1 }}>
-                                            <p style={{ margin: '0 0 1rem 0', fontWeight: '700', fontSize: '1.1rem', lineHeight: 1.6 }}>{q.en}</p>
-                                            {q.ur && <p className="urdu-text" style={{ margin: 0, color: 'var(--primary-color)', fontSize: '1.25rem', marginBottom: '1rem' }}>{q.ur}</p>}
+                                            <p style={{ margin: '0 0 1rem 0', fontWeight: '700', fontSize: '1.1rem', lineHeight: 1.6 }}>{q.data.en}</p>
+                                            {q.data.ur && <p className="urdu-text" style={{ margin: 0, color: 'var(--primary-color)', fontSize: '1.25rem', marginBottom: '1rem' }}>{q.data.ur}</p>}
                                             
-                                            {type === 'mcq' && q.options && (
+                                            {type === 'mcq' && q.data.options && (
                                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '1.5rem', padding: '1.25rem', background: 'var(--primary-light)', borderRadius: 'var(--radius-md)' }}>
-                                                    {q.options.map((opt, i) => (
+                                                    {q.data.options.map((opt, i) => (
                                                         <div key={i} style={{ fontSize: '0.9rem', fontWeight: '500' }}>
                                                             <span style={{ fontWeight: '800', color: 'var(--primary-color)', marginRight: '0.6rem' }}>{String.fromCharCode(65 + i)}</span>
                                                             {opt}
-                                                            {q.urOptions?.[i] && <div className="urdu-text" style={{ fontSize: '1rem', opacity: 0.8, marginTop: '0.2rem' }}>{q.urOptions[i]}</div>}
+                                                            {q.data.urOptions?.[i] && <div className="urdu-text" style={{ fontSize: '1rem', opacity: 0.8, marginTop: '0.2rem' }}>{q.data.urOptions[i]}</div>}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -266,14 +300,7 @@ const ManageQuestions = () => {
                                             <button 
                                                 className="btn btn-secondary" 
                                                 style={{ padding: '0.6rem', color: '#ef4444', border: '1px solid transparent' }}
-                                                onClick={() => {
-                                                    if (window.confirm('Are you sure you want to delete this question?')) {
-                                                        const currentBank = { ...savedCustomQuestions };
-                                                        currentBank[clsSubj][chapter][type].splice(idx, 1);
-                                                        localStorage.setItem('customQuestionBank', JSON.stringify(currentBank));
-                                                        setSavedCustomQuestions(currentBank);
-                                                    }
-                                                }}
+                                                onClick={() => handleDelete(q.id)}
                                             >
                                                 <Trash2 size={20} />
                                             </button>

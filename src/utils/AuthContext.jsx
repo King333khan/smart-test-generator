@@ -97,6 +97,89 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user, profile]);
 
+    const updateProfile = async (updates) => {
+        if (!user) return;
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('id', user.id);
+            if (error) throw error;
+            await fetchProfile(user.id, user.email);
+        } catch (err) {
+            console.error('Update profile error:', err);
+        }
+    };
+
+    const syncLocalToCloud = async () => {
+        if (!user || !profile) return;
+        
+        console.log('🔄 Starting SaaS Cloud Sync...');
+        
+        try {
+            // 1. Sync Settings (Logo & Institute Name)
+            const localSettings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+            if (localSettings.logo && !profile.institute_logo_url) {
+                await updateProfile({ 
+                    institute_logo_url: localSettings.logo,
+                    institute_name: localSettings.defaultInstitute || profile.institute_name 
+                });
+            }
+
+            // 2. Sync Question Bank
+            const localBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+            for (const clsSubj of Object.keys(localBank)) {
+                const [cls, subject] = clsSubj.split('_');
+                for (const chId of Object.keys(localBank[clsSubj])) {
+                    const types = localBank[clsSubj][chId];
+                    for (const type of Object.keys(types)) {
+                        const qs = types[type];
+                        if (qs && qs.length > 0) {
+                            for (const q of qs) {
+                                // Upload to custom_questions table
+                                await supabase.from('custom_questions').insert({
+                                    user_id: user.id,
+                                    class: cls,
+                                    subject: subject,
+                                    chapter: chId,
+                                    type: type,
+                                    data: q
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Sync Saved Tests
+            const localTests = JSON.parse(localStorage.getItem('savedTests') || '[]');
+            if (localTests.length > 0) {
+                for (const test of localTests) {
+                    await supabase.from('saved_tests').insert({
+                        user_id: user.id,
+                        test_title: test.testTitle,
+                        cls: test.cls,
+                        subject: test.subject,
+                        config: test.config,
+                        test_data: test
+                    });
+                }
+            }
+
+            // Mark as synced to avoid duplicates
+            localStorage.setItem('saas_synced', 'true');
+            console.log('✅ SaaS Cloud Sync Complete!');
+        } catch (err) {
+            console.error('Sync Error:', err);
+        }
+    };
+
+    useEffect(() => {
+        if (user && profile && !localStorage.getItem('saas_synced')) {
+            syncLocalToCloud();
+        }
+    }, [user, profile]);
+
     const value = {
         signUp: (data) => supabase.auth.signUp(data),
         signIn: (data) => supabase.auth.signInWithPassword(data),
@@ -104,6 +187,7 @@ export const AuthProvider = ({ children }) => {
         resetPassword: (email) => supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/settings' }),
         user,
         profile,
+        updateProfile,
         refreshProfile: () => fetchProfile(user?.id),
         isPro: profile?.plan_type === 'Pro' || profile?.plan_type === 'Premium',
         isSubscriptionActive: profile?.subscription_status === 'active'

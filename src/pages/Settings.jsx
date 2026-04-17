@@ -18,19 +18,16 @@ const Settings = () => {
     const [pwdSaved, setPwdSaved] = useState(false);
 
     useEffect(() => {
-        const local = JSON.parse(localStorage.getItem('appSettings')) || {};
-        
-        // Remove hardcoded garbage from previous builds
-        if (local.defaultInstitute === 'My School') local.defaultInstitute = '';
-
-        setSettings({
-            defaultInstitute: local.defaultInstitute || profile?.institute_name || '',
-            defaultTestTitle: local.defaultTestTitle || 'Monthly Assessment - 2026',
-            address: local.address || '',
-            mobile: local.mobile || '',
-            theme: local.theme || 'light',
-            logo: local.logo || null
-        });
+        if (profile) {
+            setSettings({
+                defaultInstitute: profile.institute_name || '',
+                defaultTestTitle: profile.default_test_title || 'Monthly Assessment - 2026',
+                address: profile.address || '',
+                mobile: profile.mobile || '',
+                theme: profile.theme || 'light',
+                logo: profile.institute_logo_url || null
+            });
+        }
     }, [profile]);
 
     const handleChange = (e) => {
@@ -39,36 +36,27 @@ const Settings = () => {
     };
 
     const handleSave = async () => {
-        try {
-            // Save to local storage safely (protect against QuotaExceeded on large base64)
-            localStorage.setItem('appSettings', JSON.stringify(settings));
-        } catch (e) {
-            console.error('LocalStorage quota exceeded! Trying to save without logo...');
-            alert('Your chosen logo is too large for local storage. We will save it without the logo.');
-            const fallbackSettings = { ...settings, logo: null };
-            localStorage.setItem('appSettings', JSON.stringify(fallbackSettings));
-        }
-        
-        // Also update Supabase profile if user is logged in
-        if (user) {
-            try {
-                // Only write institute_name. Address and mobile might not exist in the DB schema
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({
-                        institute_name: settings.defaultInstitute
-                    })
-                    .eq('id', user.id);
-                
-                if (error) console.error('Error updating profile in db:', error);
-                else await refreshProfile(); // Ensure global state knows about the change!
-            } catch (err) {
-                console.error('Error in handleSave:', err);
-            }
+        if (!user) {
+            alert('Please login to save settings');
+            return;
         }
 
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 3000);
+        try {
+            await updateProfile({
+                institute_name: settings.defaultInstitute,
+                default_test_title: settings.defaultTestTitle,
+                address: settings.address,
+                mobile: settings.mobile,
+                institute_logo_url: settings.logo,
+                theme: settings.theme
+            });
+            
+            setIsSaved(true);
+            setTimeout(() => setIsSaved(false), 3000);
+        } catch (err) {
+            console.error('Error in handleSave:', err);
+            alert('Failed to save settings to cloud.');
+        }
     };
 
     const handleLogoUpload = (e) => {
@@ -77,12 +65,11 @@ const Settings = () => {
 
         const reader = new FileReader();
         reader.onloadend = () => {
-            // Compress Image using Canvas before storing in state/localStorage
+            // Compress Image using Canvas before storing
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                // Calculate new dimensions (max width 300px, max height 300px)
-                const MAX_SIZE = 300;
+                const MAX_SIZE = 400; // slightly larger for cloud
                 let width = img.width;
                 let height = img.height;
 
@@ -103,8 +90,7 @@ const Settings = () => {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Compress heavily (quality 0.7) to ensure tiny footprint
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
                 setSettings(prev => ({ ...prev, logo: compressedBase64 }));
             };
             img.src = reader.result;
