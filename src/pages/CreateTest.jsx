@@ -124,7 +124,7 @@ const CreateTest = () => {
         };
 
         if (profile) {
-            loadInitialData();
+            fetchData();
         }
     }, [user, profile]);
 

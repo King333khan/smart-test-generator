@@ -17,6 +17,7 @@ const ViewTest = () => {
     const [testData, setTestData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
+    const [cloudBank, setCloudBank] = useState({});
 
     // Advanced Paper Settings
     const [settings, setSettings] = useState({
