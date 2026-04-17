@@ -40,10 +40,10 @@ const Navbar = () => {
     } catch (err) {
       console.error('Sign out error:', err);
     } finally {
-      // Clear data and redirect seamlessly to the Landing page
+      // Clear data and force a full page refresh to reset all React states instantly
       localStorage.clear();
       sessionStorage.clear();
-      navigate('/');
+      window.location.href = '/';
     }
   };
 

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Save, User, Building, Settings as SettingsIcon, Phone, MapPin, Lock } from 'lucide-react';
+import { useAuth } from '../utils/AuthContext';
+import { supabase } from '../utils/supabaseClient';
 
 const Settings = () => {
+    const { user, profile, refreshProfile } = useAuth();
     const [settings, setSettings] = useState({
         defaultInstitute: 'My School',
         defaultTestTitle: 'Monthly Assessment - 2026',
@@ -23,16 +26,45 @@ const Settings = () => {
             theme: 'light',
             logo: null
         };
+        
+        // Give priority to Supabase profile data if it exists
+        if (profile) {
+            savedSettings.defaultInstitute = profile.institute_name || savedSettings.defaultInstitute;
+            savedSettings.address = profile.address || savedSettings.address;
+            savedSettings.mobile = profile.mobile || savedSettings.mobile;
+        }
+
         setSettings(savedSettings);
-    }, []);
+    }, [profile]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setSettings(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        // Save to local storage
         localStorage.setItem('appSettings', JSON.stringify(settings));
+        
+        // Also update Supabase profile if user is logged in
+        if (user) {
+            try {
+                const { error } = await supabase
+                    .from('profiles')
+                    .update({
+                        institute_name: settings.defaultInstitute,
+                        address: settings.address,
+                        mobile: settings.mobile
+                    })
+                    .eq('id', user.id);
+                
+                if (error) console.error('Error updating profile in db:', error);
+                else await refreshProfile(); // Ensure global state knows about the change!
+            } catch (err) {
+                console.error('Error in handleSave:', err);
+            }
+        }
+
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
     };
