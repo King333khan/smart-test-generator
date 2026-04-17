@@ -73,57 +73,47 @@ const CreateTest = () => {
     // Fetch profile data from Supabase and LocalSettings
     useEffect(() => {
         const fetchProfile = async () => {
-            const savedSettings = JSON.parse(localStorage.getItem('appSettings')) || {};
+            const local = JSON.parse(localStorage.getItem('appSettings')) || {};
+            if (local.defaultInstitute === 'My School') local.defaultInstitute = '';
             
-            // Set local settings fallback first
-            setTestData(prev => ({
-                ...prev,
-                instituteName: savedSettings.defaultInstitute || prev.instituteName,
-                testTitle: savedSettings.defaultTestTitle || prev.testTitle,
-                address: savedSettings.address || prev.address,
-                mobile: savedSettings.mobile || prev.mobile,
-                logo: savedSettings.logo || prev.logo
-            }));
-
+            let baseInstitute = local.defaultInstitute;
+            
             if (!user) {
                 setLoadingProfile(false);
-                return;
-            }
-            
-            // Priority 1: Check database "profiles" table
-            try {
-                const { data, error } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
+            } else {
+                try {
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
 
-                if (data && data.institute_name) {
-                    setTestData(prev => ({
-                        ...prev,
-                        instituteName: prev.instituteName !== 'My School' ? prev.instituteName : (data.institute_name || 'My School'),
-                        address: prev.address || data.address || '',
-                        mobile: prev.mobile || data.mobile || ''
-                    }));
-                } 
-                // Priority 2: Fallback to Auth Metadata (Signup information)
-                else if (user.user_metadata?.institute_name) {
-                    setTestData(prev => ({
-                        ...prev,
-                        instituteName: prev.instituteName !== 'My School' ? prev.instituteName : user.user_metadata.institute_name
-                    }));
+                    if (!baseInstitute) {
+                        if (data && data.institute_name) {
+                            baseInstitute = data.institute_name;
+                        } else if (user.user_metadata?.institute_name) {
+                            baseInstitute = user.user_metadata.institute_name;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error fetching profile:', err);
+                    if (!baseInstitute && user.user_metadata?.institute_name) {
+                        baseInstitute = user.user_metadata.institute_name;
+                    }
+                } finally {
+                    setLoadingProfile(false);
                 }
-            } catch (err) {
-                console.error('Error fetching profile:', err);
-                if (user.user_metadata?.institute_name) {
-                    setTestData(prev => ({
-                        ...prev,
-                        instituteName: user.user_metadata.institute_name
-                    }));
-                }
-            } finally {
-                setLoadingProfile(false);
             }
+
+            // Set final synthesized state once safely
+            setTestData(prev => ({
+                ...prev,
+                instituteName: baseInstitute || 'Institute Name',
+                testTitle: local.defaultTestTitle || 'Monthly Assessment - 2026',
+                address: local.address || '',
+                mobile: local.mobile || '',
+                logo: local.logo || null
+            }));
         };
 
         fetchProfile();
