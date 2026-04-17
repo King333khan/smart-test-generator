@@ -39,8 +39,15 @@ const Settings = () => {
     };
 
     const handleSave = async () => {
-        // Save to local storage
-        localStorage.setItem('appSettings', JSON.stringify(settings));
+        try {
+            // Save to local storage safely (protect against QuotaExceeded on large base64)
+            localStorage.setItem('appSettings', JSON.stringify(settings));
+        } catch (e) {
+            console.error('LocalStorage quota exceeded! Trying to save without logo...');
+            alert('Your chosen logo is too large for local storage. We will save it without the logo.');
+            const fallbackSettings = { ...settings, logo: null };
+            localStorage.setItem('appSettings', JSON.stringify(fallbackSettings));
+        }
         
         // Also update Supabase profile if user is logged in
         if (user) {
@@ -66,13 +73,43 @@ const Settings = () => {
 
     const handleLogoUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setSettings(prev => ({ ...prev, logo: reader.result }));
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            // Compress Image using Canvas before storing in state/localStorage
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                // Calculate new dimensions (max width 300px, max height 300px)
+                const MAX_SIZE = 300;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_SIZE) {
+                        height *= MAX_SIZE / width;
+                        width = MAX_SIZE;
+                    }
+                } else {
+                    if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height;
+                        height = MAX_SIZE;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Compress heavily (quality 0.7) to ensure tiny footprint
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                setSettings(prev => ({ ...prev, logo: compressedBase64 }));
             };
-            reader.readAsDataURL(file);
-        }
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
     };
 
     const handlePasswordChange = (e) => {
