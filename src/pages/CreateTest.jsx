@@ -77,7 +77,7 @@ const CreateTest = () => {
 
     // Fetch profile data and templates from Supabase
     useEffect(() => {
-        const loadInitialData = async () => {
+        const fetchData = async () => {
             if (!user) {
                 setLoadingProfile(false);
                 return;
@@ -109,13 +109,15 @@ const CreateTest = () => {
                 }
 
                 // Setup profile-based defaults
-                setTestData(prev => ({
-                    ...prev,
-                    instituteName: profile?.institute_name || prev.instituteName,
-                    address: profile?.address || prev.address,
-                    mobile: profile?.mobile || prev.mobile,
-                    logo: profile?.institute_logo_url || prev.logo
-                }));
+                if (profile) {
+                    setTestData(prev => ({
+                        ...prev,
+                        instituteName: profile.institute_name || prev.instituteName,
+                        address: profile.address || prev.address,
+                        mobile: profile.mobile || prev.mobile,
+                        logo: profile.institute_logo_url || prev.logo
+                    }));
+                }
             } catch (err) {
                 console.error('Initial data load error:', err);
             } finally {
@@ -123,9 +125,7 @@ const CreateTest = () => {
             }
         };
 
-        if (profile) {
-            fetchData();
-        }
+        fetchData();
     }, [user, profile]);
 
     const [expandedChapters, setExpandedChapters] = useState([]); // State for expanded chapter IDs

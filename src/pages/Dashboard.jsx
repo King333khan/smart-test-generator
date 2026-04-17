@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CLASSES, SUBJECTS } from '../data/mockSyllabus';
 import { useAuth } from '../utils/AuthContext';
+import { supabase } from '../utils/supabaseClient';
 import { FileText, Calendar, Activity, Tag, Crown, ShieldAlert } from 'lucide-react';
 
 const Dashboard = () => {

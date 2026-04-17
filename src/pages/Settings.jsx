@@ -4,7 +4,7 @@ import { useAuth } from '../utils/AuthContext';
 import { supabase } from '../utils/supabaseClient';
 
 const Settings = () => {
-    const { user, profile, refreshProfile } = useAuth();
+    const { user, profile, updateProfile, refreshProfile } = useAuth();
     const [settings, setSettings] = useState({
         defaultInstitute: 'My School',
         defaultTestTitle: 'Monthly Assessment - 2026',
