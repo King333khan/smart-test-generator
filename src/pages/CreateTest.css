@@ -530,9 +530,11 @@
         margin: 0;
     }
 
-    .mcq-item,
+    .dual-mcq-item,
+    .dual-subjective-q,
     .short-qs,
     .long-qs {
+        page-break-inside: avoid;
         break-inside: avoid;
     }
 }
