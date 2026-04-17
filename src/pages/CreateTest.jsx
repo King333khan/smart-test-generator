@@ -70,9 +70,21 @@ const CreateTest = () => {
     const [isSaved, setIsSaved] = useState(false);
     const isLimitReached = !isPro && profile && profile.tests_count >= profile.max_tests;
 
-    // Fetch profile data from Supabase
+    // Fetch profile data from Supabase and LocalSettings
     useEffect(() => {
         const fetchProfile = async () => {
+            const savedSettings = JSON.parse(localStorage.getItem('appSettings')) || {};
+            
+            // Set local settings fallback first
+            setTestData(prev => ({
+                ...prev,
+                instituteName: savedSettings.defaultInstitute || prev.instituteName,
+                testTitle: savedSettings.defaultTestTitle || prev.testTitle,
+                address: savedSettings.address || prev.address,
+                mobile: savedSettings.mobile || prev.mobile,
+                logo: savedSettings.logo || prev.logo
+            }));
+
             if (!user) {
                 setLoadingProfile(false);
                 return;
@@ -103,7 +115,6 @@ const CreateTest = () => {
                 }
             } catch (err) {
                 console.error('Error fetching profile:', err);
-                // Fallback to Auth Metadata on error too
                 if (user.user_metadata?.institute_name) {
                     setTestData(prev => ({
                         ...prev,
