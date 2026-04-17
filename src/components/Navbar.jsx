@@ -32,7 +32,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // 2-second timeout to ensure it doesn't hang forever
+      // 2-second timeout for the network call
       await Promise.race([
           signOut(),
           new Promise(resolve => setTimeout(resolve, 2000))
@@ -40,8 +40,13 @@ const Navbar = () => {
     } catch (err) {
       console.error('Sign out error:', err);
     } finally {
-      // Do NOT clear localStorage entirely because appSettings (Logo) and savedTests are stored there!
-      // Supabase signOut already removes the auth token.
+      // Manually clear Supabase auth tokens to guarantee logout
+      Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sb-')) {
+              localStorage.removeItem(key);
+          }
+      });
+      sessionStorage.clear();
       window.location.href = '/';
     }
   };
