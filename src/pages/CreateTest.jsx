@@ -680,6 +680,31 @@ const CreateTest = () => {
 
                 {step === 4 && (
                     <div className="wizard-step fade-in" id="printable-area">
+                        <div className="no-print" style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', padding: '1rem', background: 'var(--primary-light)', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-color)' }}>
+                            <div style={{ fontWeight: '700', color: 'var(--primary-color)', marginRight: '1rem', display: 'flex', alignItems: 'center' }}>
+                                <FileText size={20} style={{ marginRight: '0.5rem' }} /> PAGE OPTIMIZATION
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                    <input type="radio" name="theme" checked={testData.theme === 'classic'} onChange={() => updateData('theme', 'classic')} /> Standard
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '700', color: '#10b981' }}>
+                                    <input type="radio" name="theme" checked={testData.theme === 'compact'} onChange={() => updateData('theme', 'compact')} /> Eco-Compact (1-2 Pages)
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                    <input type="radio" name="theme" checked={testData.theme === 'modern'} onChange={() => updateData('theme', 'modern')} /> Premium
+                                </label>
+                            </div>
+                            <div style={{ marginLeft: 'auto', display: 'flex', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                    <input type="radio" name="font" checked={testData.urduFont === 'nastaliq'} onChange={() => updateData('urduFont', 'nastaliq')} /> Nastaliq
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                    <input type="radio" name="font" checked={testData.urduFont === 'regular'} onChange={() => updateData('urduFont', 'regular')} /> Regular
+                                </label>
+                            </div>
+                        </div>
+
                         <div className={`paper-container theme-${testData.theme} font-${testData.urduFont}`}>
                             {testData.showWatermark && testData.logo && (
                                 <img src={testData.logo} alt="" className="watermark-bg" />

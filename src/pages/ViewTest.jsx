@@ -261,10 +261,28 @@ const ViewTest = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
-                    {/* Line Height Control */}
+                    {/* Theme Optimization */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
+                        <Files size={16} className="text-muted" />
+                        <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--primary-color)' }}>ECO-COMPACT</span>
+                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                            <button className={`btn-sm ${testData.theme === 'classic' ? 'active' : ''}`} onClick={() => handleDataChange('theme', 'classic')}>Standard</button>
+                            <button className={`btn-sm ${testData.theme === 'compact' ? 'active' : ''}`} style={{ color: testData.theme === 'compact' ? '#10b981' : '' }} onClick={() => handleDataChange('theme', 'compact')}>Compact</button>
+                            <button className={`btn-sm ${testData.theme === 'modern' ? 'active' : ''}`} onClick={() => handleDataChange('theme', 'modern')}>Premium</button>
+                        </div>
+                    </div>
+
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
                         <Type size={16} className="text-muted" />
-                        <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Spacing</span>
+                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                            <button className={`btn-sm ${testData.urduFont === 'nastaliq' ? 'active' : ''}`} onClick={() => handleDataChange('urduFont', 'nastaliq')}>Nastaliq</button>
+                            <button className={`btn-sm ${testData.urduFont === 'regular' ? 'active' : ''}`} onClick={() => handleDataChange('urduFont', 'regular')}>Regular</button>
+                        </div>
+                    </div>
+
+                    {/* Line Height Control */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Line Spacing</span>
                         <button className="btn btn-secondary" style={{ padding: '0.25rem' }} onClick={() => changeLineHeight(-0.1)}><Minus size={14} /></button>
                         <span style={{ fontSize: '0.9rem', width: '30px', textAlign: 'center' }}>{settings.lineHeight.toFixed(1)}</span>
                         <button className="btn btn-secondary" style={{ padding: '0.25rem' }} onClick={() => changeLineHeight(0.1)}><Plus size={14} /></button>
@@ -272,7 +290,7 @@ const ViewTest = () => {
 
                     {/* Header Toggle/Style */}
                     <button className={`btn btn-secondary ${settings.showHeader ? '' : 'text-muted'}`} onClick={() => toggleSetting('showHeader')} style={{ opacity: settings.showHeader ? 1 : 0.6 }}>
-                        <LayoutTemplate size={16} /> {settings.showHeader ? 'Hide Header' : 'Show Header'}
+                        <LayoutTemplate size={16} /> Header
                     </button>
 
                     {settings.showHeader && (

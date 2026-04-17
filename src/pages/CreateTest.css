@@ -475,23 +475,73 @@
 }
 
 .theme-compact {
-    padding: 2rem !important;
+    padding: 1cm !important;
+    font-size: 10pt !important;
 }
 
 .theme-compact .paper-header {
     border-bottom: 1px solid #000;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .theme-compact .institute-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.1rem;
 }
 
-.theme-compact .mcq-list, .theme-compact .short-qs {
+.theme-compact .test-subtitle {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.theme-compact .paper-meta, 
+.theme-compact .student-details {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.theme-compact .question-section {
+    margin-bottom: 0.75rem;
+}
+
+.theme-compact .section-title {
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.theme-compact .section-title h3 {
+    font-size: 0.9rem;
+}
+
+.theme-compact .mcq-list, 
+.theme-compact .short-qs .questions-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 0.5rem 1rem;
+    margin-top: 0.5rem !important;
+}
+
+.theme-compact .dual-mcq-item,
+.theme-compact .dual-subjective-q {
+    margin-bottom: 0.4rem !important;
+}
+
+.theme-compact .mcq-options-row {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.theme-compact .mcq-options-row > div {
+    font-size: 0.8rem;
+}
+
+.theme-compact .dual-lang-header h3 {
+    font-size: 0.95rem;
+}
+
+.theme-compact .dual-lang-header span {
+    font-size: 0.8rem;
 }
 
 /* Font Toggle Support */
@@ -503,12 +553,26 @@
     line-height: 2;
 }
 
+.theme-compact.font-nastaliq .ur, 
+.theme-compact.font-nastaliq .urdu-text, 
+.theme-compact.font-nastaliq .mcq-ur {
+    font-size: 1.1rem !important;
+    line-height: 1.5 !important;
+}
+
 .font-regular .ur, 
 .font-regular .urdu-text, 
 .font-regular .mcq-ur {
     font-family: 'Nafees Web Naskh', 'Arial', sans-serif !important;
     font-size: 1.1rem;
     line-height: 1.6;
+}
+
+.theme-compact.font-regular .ur, 
+.theme-compact.font-regular .urdu-text, 
+.theme-compact.font-regular .mcq-ur {
+    font-size: 0.95rem !important;
+    line-height: 1.4 !important;
 }
 
 /* Watermark and Logo branding classes */
