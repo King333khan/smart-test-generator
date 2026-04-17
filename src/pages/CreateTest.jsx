@@ -101,16 +101,16 @@ const CreateTest = () => {
                 if (data && data.institute_name) {
                     setTestData(prev => ({
                         ...prev,
-                        instituteName: data.institute_name,
-                        address: data.address || prev.address,
-                        mobile: data.mobile || prev.mobile
+                        instituteName: prev.instituteName !== 'My School' ? prev.instituteName : (data.institute_name || 'My School'),
+                        address: prev.address || data.address || '',
+                        mobile: prev.mobile || data.mobile || ''
                     }));
                 } 
                 // Priority 2: Fallback to Auth Metadata (Signup information)
                 else if (user.user_metadata?.institute_name) {
                     setTestData(prev => ({
                         ...prev,
-                        instituteName: user.user_metadata.institute_name
+                        instituteName: prev.instituteName !== 'My School' ? prev.instituteName : user.user_metadata.institute_name
                     }));
                 }
             } catch (err) {

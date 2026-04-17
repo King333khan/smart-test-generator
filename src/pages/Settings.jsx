@@ -27,11 +27,12 @@ const Settings = () => {
             logo: null
         };
         
-        // Give priority to Supabase profile data if it exists
+        // Avoid overriding local changes with blank/old DB data.
+        // We only use profile data if local storage is somehow empty.
         if (profile) {
-            savedSettings.defaultInstitute = profile.institute_name || savedSettings.defaultInstitute;
-            savedSettings.address = profile.address || savedSettings.address;
-            savedSettings.mobile = profile.mobile || savedSettings.mobile;
+            savedSettings.defaultInstitute = savedSettings.defaultInstitute || profile.institute_name;
+            savedSettings.address = savedSettings.address || profile.address;
+            savedSettings.mobile = savedSettings.mobile || profile.mobile;
         }
 
         setSettings(savedSettings);
@@ -49,12 +50,11 @@ const Settings = () => {
         // Also update Supabase profile if user is logged in
         if (user) {
             try {
+                // Only write institute_name. Address and mobile might not exist in the DB schema
                 const { error } = await supabase
                     .from('profiles')
                     .update({
-                        institute_name: settings.defaultInstitute,
-                        address: settings.address,
-                        mobile: settings.mobile
+                        institute_name: settings.defaultInstitute
                     })
                     .eq('id', user.id);
                 
