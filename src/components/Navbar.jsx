@@ -40,9 +40,8 @@ const Navbar = () => {
     } catch (err) {
       console.error('Sign out error:', err);
     } finally {
-      // Clear data and force a full page refresh to reset all React states instantly
-      localStorage.clear();
-      sessionStorage.clear();
+      // Do NOT clear localStorage entirely because appSettings (Logo) and savedTests are stored there!
+      // Supabase signOut already removes the auth token.
       window.location.href = '/';
     }
   };
