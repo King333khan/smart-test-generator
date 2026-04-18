@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
@@ -35,26 +36,37 @@ const AppContent = () => {
             <div className="premium-loader-text">Loading Portal...</div>
           </div>
         }>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-            <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              style={{ minHeight: '100%' }}
+            >
+              <Routes location={location}>
+                {/* Public Routes */}
+                <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+                <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
 
-            {/* Protected Routes */}
-            <Route path="/" element={!user ? <Landing /> : <ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/create" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
-            <Route path="/saved" element={<ProtectedRoute><SavedTests /></ProtectedRoute>} />
-            <Route path="/past-papers" element={<ProtectedRoute><PastPapers /></ProtectedRoute>} />
-            <Route path="/manage-questions" element={<ProtectedRoute><ManageQuestions /></ProtectedRoute>} />
-            <Route path="/test-schedule" element={<ProtectedRoute><TestSchedule /></ProtectedRoute>} />
-            <Route path="/test/:id" element={<ProtectedRoute><ViewTest /></ProtectedRoute>} />
-            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-            
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+                {/* Protected Routes */}
+                <Route path="/" element={!user ? <Landing /> : <ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/create" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
+                <Route path="/saved" element={<ProtectedRoute><SavedTests /></ProtectedRoute>} />
+                <Route path="/past-papers" element={<ProtectedRoute><PastPapers /></ProtectedRoute>} />
+                <Route path="/manage-questions" element={<ProtectedRoute><ManageQuestions /></ProtectedRoute>} />
+                <Route path="/test-schedule" element={<ProtectedRoute><TestSchedule /></ProtectedRoute>} />
+                <Route path="/test/:id" element={<ProtectedRoute><ViewTest /></ProtectedRoute>} />
+                <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                
+                {/* Fallback */}
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </motion.div>
+          </AnimatePresence>
         </Suspense>
       </main>
     </div>

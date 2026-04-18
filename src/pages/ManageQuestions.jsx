@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Library, Loader2 } from 'lucide-react';
+import { Save, Plus, Trash2, Library, Loader2, Sparkles } from 'lucide-react';
 import { CLASSES, SUBJECTS, CHAPTERS } from '../data/mockSyllabus';
 import { supabase } from '../utils/supabaseClient';
 import { useAuth } from '../utils/AuthContext';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const ManageQuestions = () => {
     const { user } = useAuth();
@@ -18,6 +19,7 @@ const ManageQuestions = () => {
 
     const [savedQuestions, setSavedQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [translating, setTranslating] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -49,8 +51,49 @@ const ManageQuestions = () => {
     }, [user, cls, subject, chapter, type]);
 
     const handleAutoTranslate = async () => {
-        if (!enText) return;
-        alert('Auto-translate feature coming soon! Please enter Urdu manually for now.');
+        if (!enText) return alert('Please enter English text first.');
+        
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!apiKey) return alert('AI Key not found. Please add VITE_GEMINI_API_KEY to .env file.');
+
+        setTranslating(true);
+        try {
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+            const isMCQ = type === 'mcq';
+            const prompt = `
+                Translate the following educational content from English to Urdu. 
+                Use professional educational Urdu language. 
+                Formatting: Return ONLY a JSON object.
+                Content:
+                Question: "${enText}"
+                ${isMCQ ? `Options: ${JSON.stringify(options)}` : ''}
+
+                Required JSON format:
+                {
+                    "translatedQuestion": "Urdu text here",
+                    ${isMCQ ? `"translatedOptions": ["Opt1", "Opt2", "Opt3", "Opt4"]` : ''}
+                }
+            `;
+
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
+            
+            // Clean response to handle potential markdown wrappers
+            const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            const data = JSON.parse(jsonStr);
+
+            if (data.translatedQuestion) setUrText(data.translatedQuestion);
+            if (isMCQ && data.translatedOptions) setUrOptions(data.translatedOptions);
+
+        } catch (err) {
+            console.error('Translation error:', err);
+            alert('AI Translation failed. Please try again.');
+        } finally {
+            setTranslating(false);
+        }
     };
 
     const handleSave = async () => {
@@ -176,7 +219,24 @@ const ManageQuestions = () => {
                             <div className="form-group">
                                 <label style={{ fontWeight: '700', display: 'flex', justifyContent: 'space-between' }}>
                                     English Text
-                                    <button onClick={handleAutoTranslate} style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '700' }}>AUTO-TRANSLATE</button>
+                                    <button 
+                                        disabled={translating}
+                                        onClick={handleAutoTranslate} 
+                                        style={{ 
+                                            background: 'none', 
+                                            border: 'none', 
+                                            color: translating ? 'var(--text-muted)' : 'var(--primary-color)', 
+                                            fontSize: '0.75rem', 
+                                            cursor: translating ? 'not-allowed' : 'pointer', 
+                                            fontWeight: '700',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.4rem'
+                                        }}
+                                    >
+                                        {translating ? <Loader2 size={12} className="spin" /> : <Sparkles size={12} />}
+                                        {translating ? 'TRANSLATING...' : 'AI AUTO-TRANSLATE'}
+                                    </button>
                                 </label>
                                 <textarea 
                                     className="form-input" 

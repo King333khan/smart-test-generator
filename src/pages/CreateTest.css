@@ -6,6 +6,7 @@
     min-height: calc(100vh - 5rem);
     display: flex;
     flex-direction: column;
+    transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .create-test-header {
@@ -802,4 +803,26 @@
         flex-direction: column;
         width: 100%;
     }
-}
+}
+/* Side-by-Side Configuration Layout */
+.config-layout {
+    transition: all 0.5s ease;
+}
+
+.config-form-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.config-form-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+    .config-layout {
+        grid-template-columns: 1fr !important;
+    }
+    .live-preview-container {
+        display: none !important;
+    }
+}
